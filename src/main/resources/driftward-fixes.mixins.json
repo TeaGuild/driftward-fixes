@@ -5,7 +5,8 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "ChatRelayMixin",
-    "SpoutFillPurityMixin"
+    "SpoutFillPurityMixin",
+    "FluidInteractionRegistryMixin"
   ],
   "client": [
     "client.BeeMovieMixin"
