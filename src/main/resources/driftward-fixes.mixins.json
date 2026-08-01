@@ -6,7 +6,8 @@
   "mixins": [
     "ChatRelayMixin",
     "SpoutFillPurityMixin",
-    "FluidInteractionRegistryMixin"
+    "FluidInteractionRegistryMixin",
+    "LavaFluidMixin"
   ],
   "client": [
     "client.BeeMovieMixin"
