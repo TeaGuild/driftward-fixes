@@ -10,10 +10,12 @@
     "LavaFluidMixin",
     "WrenchItemMixin",
     "FluidReactionsMixin",
-    "DeployerHandlerMixin"
+    "DeployerHandlerMixin",
+    "RopeItemMixin"
   ],
   "client": [
-    "client.BeeMovieMixin"
+    "client.BeeMovieMixin",
+    "client.ClientRopeItemHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
