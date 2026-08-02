@@ -1,4 +1,4 @@
-package ink.astrius.driftwardfixes.mixin;
+package ink.astrius.driftwardfixes.mixin.rope;
 
 import dev.simulated_team.simulated.index.SimItems;
 import net.minecraft.world.InteractionResult;

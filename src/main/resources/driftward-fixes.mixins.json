@@ -11,7 +11,8 @@
     "wrench.WrenchItemMixin",
     "wrench.IWrenchableMixin",
     "DeployerHandlerMixin",
-    "RopeItemMixin"
+    "rope.RopeItemMixin",
+    "rope.RopeStrandHolderBehaviorMixin"
   ],
   "client": [
     "client.BeeMovieMixin",
