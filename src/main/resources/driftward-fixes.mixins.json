@@ -8,7 +8,8 @@
     "SpoutFillPurityMixin",
     "FluidInteractionRegistryMixin",
     "LavaFluidMixin",
-    "WrenchItemMixin"
+    "WrenchItemMixin",
+    "FluidReactionsMixin"
   ],
   "client": [
     "client.BeeMovieMixin"
