@@ -1,6 +1,7 @@
 /build/
 /.gradle/
 /run/
+/default_data/
 # Vendored mod jars are local-only, except tgbridge which we track so the chat
 # relay builds without a manual download (it's not on a usable maven; see build.gradle).
 /libs/*
