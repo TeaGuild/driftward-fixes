@@ -1,4 +1,4 @@
-package ink.astrius.driftwardfixes.mixin;
+package ink.astrius.driftwardfixes.mixin.cobblegen;
 
 import net.neoforged.neoforge.fluids.FluidInteractionRegistry;
 import net.neoforged.neoforge.fluids.FluidType;

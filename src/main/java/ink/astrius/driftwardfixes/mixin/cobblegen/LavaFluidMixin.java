@@ -1,4 +1,4 @@
-package ink.astrius.driftwardfixes.mixin;
+package ink.astrius.driftwardfixes.mixin.cobblegen;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.world.level.block.Block;

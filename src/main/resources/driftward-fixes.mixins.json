@@ -5,11 +5,11 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "SpoutFillPurityMixin",
-    "FluidInteractionRegistryMixin",
-    "LavaFluidMixin",
+    "cobblegen.FluidInteractionRegistryMixin",
+    "cobblegen.LavaFluidMixin",
+    "cobblegen.FluidReactionsMixin",
     "wrench.WrenchItemMixin",
     "wrench.IWrenchableMixin",
-    "FluidReactionsMixin",
     "DeployerHandlerMixin",
     "RopeItemMixin"
   ],
