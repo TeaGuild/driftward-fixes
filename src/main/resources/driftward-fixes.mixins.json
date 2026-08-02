@@ -8,7 +8,8 @@
     "SpoutFillPurityMixin",
     "FluidInteractionRegistryMixin",
     "LavaFluidMixin",
-    "WrenchItemMixin",
+    "wrench.WrenchItemMixin",
+    "wrench.IWrenchableMixin",
     "FluidReactionsMixin",
     "DeployerHandlerMixin",
     "RopeItemMixin"
