@@ -106,6 +106,10 @@ neoForge {
     mods {
         driftwardfixes { sourceSet sourceSets.main }
     }
+    parchment {
+        minecraftVersion = "1.21.1"
+        mappingsVersion = "2024.11.17"
+    }
 
     runs {
         client {
