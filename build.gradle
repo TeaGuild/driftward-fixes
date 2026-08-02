@@ -2,7 +2,7 @@ plugins {
     id 'net.neoforged.moddev' version '2.0.78'
 }
 
-version = '1.12'
+version = '1.13'
 group = 'ink.astrius'
 base { archivesName = 'driftward-fixes' }
 
@@ -140,4 +140,14 @@ dependencies {
     runtimeOnly("maven.modrinth:yacl:3.8.2+1.21.1-neoforge")
     runtimeOnly("maven.modrinth:geckolib:tPkJmim6")  // 4.9.2
     runtimeOnly("maven.modrinth:architectury-api:13.0.11+neoforge")
+}
+
+processResources {
+    var expandProps = [
+            "version": version,
+    ]
+    inputs.properties(expandProps)
+    filesMatching("META-INF/neoforge.mods.toml") {
+        expand expandProps
+    }
 }
