@@ -140,9 +140,4 @@ dependencies {
     runtimeOnly("maven.modrinth:yacl:3.8.2+1.21.1-neoforge")
     runtimeOnly("maven.modrinth:geckolib:tPkJmim6")  // 4.9.2
     runtimeOnly("maven.modrinth:architectury-api:13.0.11+neoforge")
-    // tgbridge's NeoForge build, vendored for the StyledChat chat relay. compileOnly: the relay
-    // calls tgbridge's documented public API (TelegramBridge#onChatMessage) against the real
-    // shaded types, so it must be the neoforge jar (adventure is relocated to tgbridge.shaded.*),
-    // not the maven `dev.vanutp.tgbridge:common` artifact whose net.kyori types wouldn't link.
-    compileOnly files('libs/tgbridge.jar')
 }

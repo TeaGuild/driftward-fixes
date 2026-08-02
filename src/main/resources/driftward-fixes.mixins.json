@@ -4,7 +4,6 @@
   "package": "ink.astrius.driftwardfixes.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ChatRelayMixin",
     "SpoutFillPurityMixin",
     "FluidInteractionRegistryMixin",
     "LavaFluidMixin",
