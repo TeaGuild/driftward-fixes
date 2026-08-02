@@ -9,7 +9,8 @@
     "FluidInteractionRegistryMixin",
     "LavaFluidMixin",
     "WrenchItemMixin",
-    "FluidReactionsMixin"
+    "FluidReactionsMixin",
+    "DeployerHandlerMixin"
   ],
   "client": [
     "client.BeeMovieMixin"
