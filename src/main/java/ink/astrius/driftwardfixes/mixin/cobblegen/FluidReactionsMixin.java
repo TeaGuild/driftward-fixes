@@ -1,16 +1,16 @@
 package ink.astrius.driftwardfixes.mixin.cobblegen;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.simibubi.create.content.fluids.FluidReactions;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(FluidReactions.class)
 public class FluidReactionsMixin {
-    @ModifyExpressionValue(
+    @Redirect(
         method = "handlePipeFlowCollisionFallback",
         at = @At(
             value = "FIELD",
@@ -18,11 +18,11 @@ public class FluidReactionsMixin {
             opcode = Opcodes.GETSTATIC
         )
     )
-    private static Block pipeFlowCobbledDeepslate(Block original) {
+    private static Block pipeFlowCobbledDeepslate() {
         return Blocks.COBBLED_DEEPSLATE;
     }
 
-    @ModifyExpressionValue(
+    @Redirect(
         method = "handlePipeSpillCollisionFallback",
         at = @At(
             value = "FIELD",
@@ -30,11 +30,11 @@ public class FluidReactionsMixin {
             opcode = Opcodes.GETSTATIC
         )
     )
-    private static Block pipeSpillCobbledDeepslate(Block original) {
+    private static Block pipeSpillCobbledDeepslate() {
         return Blocks.COBBLED_DEEPSLATE;
     }
 
-    @ModifyExpressionValue(
+    @Redirect(
         method = "handlePipeSpillCollisionFallback",
         at = @At(
             value = "FIELD",
@@ -42,7 +42,7 @@ public class FluidReactionsMixin {
             opcode = Opcodes.GETSTATIC
         )
     )
-    private static Block pipeSpillDeepslate(Block original) {
+    private static Block pipeSpillDeepslate() {
         return Blocks.DEEPSLATE;
     }
 }
