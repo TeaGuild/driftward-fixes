@@ -15,7 +15,8 @@
     "rope.RopeStrandHolderBehaviorMixin",
     "rope.SimPonderScenesMixin",
     "rope.SimPonderTagsMixin",
-    "rope.RopeScenesMixin"
+    "rope.RopeScenesMixin",
+    "ContraptionColliderMixin"
   ],
   "client": [
     "client.BeeMovieMixin",
