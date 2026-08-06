@@ -17,7 +17,8 @@
     "rope.SimPonderTagsMixin",
     "rope.RopeScenesMixin",
     "ContraptionColliderMixin",
-    "AllowCopyBlockEntityDataMixin"
+    "AllowCopyBlockEntityDataMixin",
+    "crittersfix.AnimalMixin"
   ],
   "client": [
     "client.BeeMovieMixin",
