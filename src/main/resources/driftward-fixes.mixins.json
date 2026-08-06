@@ -18,7 +18,8 @@
     "rope.RopeScenesMixin",
     "ContraptionColliderMixin",
     "AllowCopyBlockEntityDataMixin",
-    "crittersfix.AnimalMixin"
+    "crittersfix.AnimalMixin",
+    "GrapplingHookEntityMixin"
   ],
   "client": [
     "client.BeeMovieMixin",
