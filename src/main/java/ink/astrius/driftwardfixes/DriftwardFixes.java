@@ -7,6 +7,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -33,6 +34,10 @@ public class DriftwardFixes {
     public static final TagKey<Item> CUSTOM_ENDER_PEARLS = TagKey.create(
         Registries.ITEM,
         ResourceLocation.fromNamespaceAndPath("endermanoverhaul", "ender_pearls")
+    );
+    public static final TagKey<Block> END_BASE = TagKey.create(
+        Registries.BLOCK,
+        ResourceLocation.fromNamespaceAndPath("driftward", "end_base")
     );
 
     public DriftwardFixes(IEventBus modEventBus, ModContainer container) {

@@ -21,7 +21,10 @@
     "crittersfix.AnimalMixin",
     "GrapplingHookEntityMixin",
     "grindstone.GrindstoneInputSlotMixin",
-    "grindstone.GrindstoneMenuMixin"
+    "grindstone.GrindstoneMenuMixin",
+    "yungs_better_end_island.WorldgenUtilsMixin",
+    "yungs_better_end_island.DragonRespawnStageMixin",
+    "yungs_better_end_island.EndSpikeUtilsMixin"
   ],
   "client": [
     "client.BeeMovieMixin",
