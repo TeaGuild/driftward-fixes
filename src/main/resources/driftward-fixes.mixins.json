@@ -19,7 +19,9 @@
     "ContraptionColliderMixin",
     "AllowCopyBlockEntityDataMixin",
     "crittersfix.AnimalMixin",
-    "GrapplingHookEntityMixin"
+    "GrapplingHookEntityMixin",
+    "grindstone.GrindstoneInputSlotMixin",
+    "grindstone.GrindstoneMenuMixin"
   ],
   "client": [
     "client.BeeMovieMixin",
