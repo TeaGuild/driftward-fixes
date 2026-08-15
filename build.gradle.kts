@@ -87,6 +87,11 @@ dependencies {
     implementation("com.github.TheDeathlyCow:thermoo:v4.8.1-neoforge")
     implementation("maven.modrinth:power-grid:8EtGIOFr")  // 0.5.5.1
     implementation("maven.modrinth:yungs-better-end-island:1.21.1-NeoForge-3.1.2")
+    // a stub file with most of the code stripped. needed to compile LavenderStructureOverlayRendererMixin
+    // as it uses a private class from lavender and moddevgradle only access transforms minecraft itself
+    // at compile time
+    // https://github.com/vanutp-forks/lavender/tree/1.21-stripped
+    implementation(files("libs/lavender-0.1.15-stub+1.21.jar"))
     compileOnly("dev.emi:emi-neoforge:1.1.24+1.21.1:api")
     runtimeOnly("dev.emi:emi-neoforge:1.1.24+1.21.1")
     runtimeOnly("maven.modrinth:moonlight:CitoQHqE")

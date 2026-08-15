@@ -24,7 +24,8 @@
     "grindstone.GrindstoneMenuMixin",
     "yungs_better_end_island.WorldgenUtilsMixin",
     "yungs_better_end_island.DragonRespawnStageMixin",
-    "yungs_better_end_island.EndSpikeUtilsMixin"
+    "yungs_better_end_island.EndSpikeUtilsMixin",
+    "client.LavenderStructureOverlayRendererMixin"
   ],
   "client": [
     "client.BeeMovieMixin",

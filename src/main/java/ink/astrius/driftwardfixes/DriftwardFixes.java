@@ -2,6 +2,7 @@ package ink.astrius.driftwardfixes;
 
 import net.minecraft.advancements.CriterionTrigger;
 import net.minecraft.advancements.critereon.ItemUsedOnLocationTrigger;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
