@@ -19,8 +19,8 @@ import java.util.List;
 @Mixin(TextUtils.class)
 public class BeeMovieMixin {
     @Redirect(
-        method = "<clinit>",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font;split(Lnet/minecraft/network/chat/FormattedText;I)Ljava/util/List;", ordinal = 1)
+        method = "splitToLines",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font;split(Lnet/minecraft/network/chat/FormattedText;I)Ljava/util/List;")
     )
     private static List<FormattedCharSequence> fixBeeMovie(Font instance, FormattedText formattedText, int i, @Local(name = "b") String beeMovie) {
         final var clean = beeMovie.replace("§r", "").replace("§0", "");
