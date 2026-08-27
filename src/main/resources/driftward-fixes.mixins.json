@@ -27,6 +27,7 @@
     "yungs_better_end_island.DragonRespawnStageMixin",
     "yungs_better_end_island.EndSpikeUtilsMixin",
     "client.LavenderStructureOverlayRendererMixin",
+    "betterend.CrashedShipFeatureMixin",
     "betterend.NBTFeatureMixin"
   ],
   "client": [
