@@ -25,7 +25,8 @@
     "yungs_better_end_island.WorldgenUtilsMixin",
     "yungs_better_end_island.DragonRespawnStageMixin",
     "yungs_better_end_island.EndSpikeUtilsMixin",
-    "client.LavenderStructureOverlayRendererMixin"
+    "client.LavenderStructureOverlayRendererMixin",
+    "betterend.NBTFeatureMixin"
   ],
   "client": [
     "client.BeeMovieMixin",

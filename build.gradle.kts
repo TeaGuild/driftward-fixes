@@ -2,7 +2,7 @@ plugins {
     id("net.neoforged.moddev") version "2.0.78"
 }
 
-version = "1.20"
+version = "1.21"
 group = "ink.astrius"
 base { archivesName = "driftward-fixes" }
 
@@ -87,6 +87,7 @@ dependencies {
     implementation("com.github.TheDeathlyCow:thermoo:v4.8.1-neoforge")
     implementation("maven.modrinth:power-grid:8EtGIOFr")  // 0.5.5.1
     implementation("maven.modrinth:yungs-better-end-island:1.21.1-NeoForge-3.1.2")
+    implementation("maven.modrinth:betterend-neoforge:21.0.33")
     // a stub file with most of the code stripped. needed to compile LavenderStructureOverlayRendererMixin
     // as it uses a private class from lavender and moddevgradle only access transforms minecraft itself
     // at compile time
