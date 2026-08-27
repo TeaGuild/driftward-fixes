@@ -1,6 +1,8 @@
 package ink.astrius.driftwardfixes.mixin.cobblegen;
 
 import com.simibubi.create.content.fluids.FluidReactions;
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import org.objectweb.asm.Opcodes;
@@ -8,6 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+@Restriction(require = @Condition("create"))
 @Mixin(FluidReactions.class)
 public class FluidReactionsMixin {
     @Redirect(

@@ -11,6 +11,8 @@ import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import ink.astrius.driftwardfixes.Config;
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerLevel;
@@ -30,10 +32,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * and configurable. Levitite uses a separate Sable floating-material path and is not touched here,
  * because this scales {@code totalLift}, which only aggregates {@code LiftingGasType} gases.
  */
+@Restriction(
+    require = {
+        @Condition("aeronautics"),
+        @Condition("thermoo")
+    }
+)
 @Mixin(ServerBalloon.class)
 public abstract class BalloonTemperatureMixin {
 
-    @Shadow private double totalLift;
+    @Shadow
+    private double totalLift;
 
     @Inject(method = "updateGasAmounts", at = @At("TAIL"))
     private void driftward$scaleLiftByTemperature(CallbackInfo ci) {

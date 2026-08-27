@@ -2,6 +2,8 @@ package ink.astrius.driftwardfixes.mixin;
 
 import com.simibubi.create.content.fluids.spout.FillingBySpout;
 import dev.ghen.thirst.content.purity.WaterPurity;
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -17,6 +19,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 // stack, fluid); here we stamp the source fluid's purity onto the resulting water-container item,
 // so dirty water yields dirty drinks through Create automation. remap=false: Create's names are
 // stable at runtime (NeoForge is Mojang-mapped).
+@Restriction(
+    require = {
+        @Condition("thirst"),
+        @Condition("create"),
+    }
+)
 @Mixin(value = FillingBySpout.class, remap = false)
 public class SpoutFillPurityMixin {
     @Inject(method = "fillItem", at = @At("RETURN"))

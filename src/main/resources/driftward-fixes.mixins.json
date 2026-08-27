@@ -3,6 +3,7 @@
   "minVersion": "0.8",
   "package": "ink.astrius.driftwardfixes.mixin",
   "compatibilityLevel": "JAVA_21",
+  "plugin": "ink.astrius.driftwardfixes.DriftwardMixinPlugin",
   "mixins": [
     "SpoutFillPurityMixin",
     "cobblegen.FluidInteractionRegistryMixin",
@@ -18,8 +19,8 @@
     "rope.RopeScenesMixin",
     "ContraptionColliderMixin",
     "AllowCopyBlockEntityDataMixin",
-    "crittersfix.AnimalMixin",
-    "GrapplingHookEntityMixin",
+    "crittersandcompanions.AnimalMixin",
+    "crittersandcompanions.GrapplingHookEntityMixin",
     "grindstone.GrindstoneInputSlotMixin",
     "grindstone.GrindstoneMenuMixin",
     "yungs_better_end_island.WorldgenUtilsMixin",

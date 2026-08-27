@@ -4,6 +4,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import dev.simulated_team.simulated.index.SimItems;
 import dev.simulated_team.simulated.index.SimPonderScenes;
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.createmod.ponder.api.registration.MultiSceneBuilder;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
@@ -16,6 +18,12 @@ import vectorwing.farmersdelight.common.registry.ModItems;
 import java.util.Arrays;
 import java.util.function.Function;
 
+@Restriction(
+    require = {
+        @Condition("simulated"),
+        @Condition("farmersdelight")
+    }
+)
 @Mixin(SimPonderScenes.class)
 public class SimPonderScenesMixin {
     @Redirect(

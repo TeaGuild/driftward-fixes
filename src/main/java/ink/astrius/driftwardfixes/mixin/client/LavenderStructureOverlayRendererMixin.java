@@ -2,6 +2,8 @@ package ink.astrius.driftwardfixes.mixin.client;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import io.wispforest.lavender.client.StructureOverlayRenderer;
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.Nullable;
@@ -15,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
 
+@Restriction(require = @Condition("lavender"))
 @Mixin(StructureOverlayRenderer.class)
 public class LavenderStructureOverlayRendererMixin {
     @Shadow

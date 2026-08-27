@@ -1,6 +1,8 @@
 package ink.astrius.driftwardfixes.mixin.client;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.mehvahdjukaar.supplementaries.client.TextUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.locale.Language;
@@ -13,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.List;
 
+@Restriction(require = @Condition("supplementaries"))
 @Mixin(TextUtils.class)
 public class BeeMovieMixin {
     @Redirect(

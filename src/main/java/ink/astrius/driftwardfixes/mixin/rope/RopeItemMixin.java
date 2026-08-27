@@ -1,6 +1,8 @@
 package ink.astrius.driftwardfixes.mixin.rope;
 
 import dev.simulated_team.simulated.index.SimItems;
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.UseOnContext;
@@ -10,6 +12,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import vectorwing.farmersdelight.common.item.RopeItem;
 
+@Restriction(
+    require = {
+        @Condition("simulated"),
+        @Condition("farmersdelight")
+    }
+)
 @Mixin(BlockItem.class)
 public class RopeItemMixin {
     @Inject(method = "useOn", at = @At("HEAD"), cancellable = true)

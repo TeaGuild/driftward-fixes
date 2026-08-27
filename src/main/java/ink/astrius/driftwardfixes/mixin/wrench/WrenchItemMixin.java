@@ -1,6 +1,8 @@
 package ink.astrius.driftwardfixes.mixin.wrench;
 
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.mehvahdjukaar.supplementaries.reg.ModRegistry;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -12,6 +14,12 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import static ink.astrius.driftwardfixes.DriftwardFixes.ROTATED_WITH_WRENCH;
 
+@Restriction(
+    require = {
+        @Condition("create"),
+        @Condition("supplementaries")
+    }
+)
 @Mixin(WrenchItem.class)
 public class WrenchItemMixin {
     @Redirect(

@@ -1,5 +1,7 @@
 package ink.astrius.driftwardfixes.mixin.grindstone;
 
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.GrindstoneMenu;
@@ -16,6 +18,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static ink.astrius.driftwardfixes.DriftwardFixes.CUSTOM_ENDER_PEARLS;
 
+// because GrindstoneInputSlotMixin is required for this and it depends on supplementaries
+@Restriction(require = @Condition("supplementaries"))
 @Mixin(GrindstoneMenu.class)
 public abstract class GrindstoneMenuMixin extends AbstractContainerMenu {
     @Shadow

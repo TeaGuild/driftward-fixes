@@ -6,8 +6,8 @@ license = "MIT"
 modId = "driftwardfixes"
 version = "${version}"
 displayName = "Driftward Fixes"
-description = "Mixin bugfixes + integrations for the Driftward modpack: C&C grappling-hook NPE crash, Supplementaries bee-movie text rendering, temperature-dependent Create Aeronautics balloon lift (colder air = more lift, via Thermoo), a tgbridge<->StyledChat relay so player chat reaches Telegram, and cactus placement that tolerates #c:glass_panes neighbours (greenhouse builds)."
-authors = "Sol (ports by)"
+description = "Driftward modpack mechanics, integrations and fixes"
+authors = "vanuta, Sol"
 
 [[mixins]]
 config = "driftward-fixes.mixins.json"
@@ -23,48 +23,4 @@ modId = "neoforge"
 type = "required"
 versionRange = "[21.1,)"
 ordering = "NONE"
-side = "BOTH"
-
-[[dependencies.driftwardfixes]]
-modId = "crittersandcompanions"
-type = "optional"
-versionRange = "[0,)"
-ordering = "NONE"
-side = "BOTH"
-
-[[dependencies.driftwardfixes]]
-modId = "supplementaries"
-type = "optional"
-versionRange = "[0,)"
-ordering = "NONE"
-side = "CLIENT"
-
-[[dependencies.driftwardfixes]]
-modId = "aeronautics"
-type = "optional"
-versionRange = "[0,)"
-ordering = "NONE"
-side = "BOTH"
-
-[[dependencies.driftwardfixes]]
-modId = "thermoo"
-type = "optional"
-versionRange = "[0,)"
-ordering = "NONE"
-side = "BOTH"
-
-# ChatRelayMixin re-feeds public chat into tgbridge when StyledChat swallows the
-# ServerChatEvent. Optional: the relay no-ops if either mod is missing.
-[[dependencies.driftwardfixes]]
-modId = "tgbridge"
-type = "optional"
-versionRange = "[0,)"
-ordering = "AFTER"
-side = "BOTH"
-
-[[dependencies.driftwardfixes]]
-modId = "styledchat"
-type = "optional"
-versionRange = "[0,)"
-ordering = "AFTER"
 side = "BOTH"

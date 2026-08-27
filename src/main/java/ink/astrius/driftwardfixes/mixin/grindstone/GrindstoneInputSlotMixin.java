@@ -1,5 +1,7 @@
 package ink.astrius.driftwardfixes.mixin.grindstone;
 
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.mehvahdjukaar.supplementaries.configs.CommonConfigs;
 import net.mehvahdjukaar.supplementaries.reg.ModRegistry;
 import net.minecraft.world.item.Item;
@@ -12,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static ink.astrius.driftwardfixes.DriftwardFixes.CUSTOM_ENDER_PEARLS;
 
+@Restriction(require = @Condition("supplementaries"))
 @Mixin(targets = {"net.minecraft.world.inventory.GrindstoneMenu$2", "net.minecraft.world.inventory.GrindstoneMenu$3"})
 public class GrindstoneInputSlotMixin {
     @Inject(method = "mayPlace", at = @At("HEAD"), cancellable = true)

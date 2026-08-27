@@ -3,11 +3,14 @@ package ink.astrius.driftwardfixes.mixin.client;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import dev.simulated_team.simulated.content.items.rope.RopeItem.ClientRopeItemHandler;
 import dev.simulated_team.simulated.content.items.rope.RopeItem.RopeItem;
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+@Restriction(require = @Condition("simulated"))
 @Mixin(ClientRopeItemHandler.class)
 public class ClientRopeItemHandlerMixin {
     @Redirect(
