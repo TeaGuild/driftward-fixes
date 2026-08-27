@@ -22,8 +22,13 @@ public class BeeMovieMixin {
         method = "splitToLines",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font;split(Lnet/minecraft/network/chat/FormattedText;I)Ljava/util/List;")
     )
-    private static List<FormattedCharSequence> fixBeeMovie(Font instance, FormattedText formattedText, int i, @Local(name = "b") String beeMovie) {
-        final var clean = beeMovie.replace("§r", "").replace("§0", "");
-        return Language.getInstance().getVisualOrder(instance.getSplitter().splitLines(clean, i, Style.EMPTY));
+    private static List<FormattedCharSequence> fixBeeMovie(
+        Font instance,
+        FormattedText text,
+        int maxWidth,
+        @Local(name = "text") String rawText
+    ) {
+        final var clean = rawText.replace("§r", "").replace("§0", "");
+        return Language.getInstance().getVisualOrder(instance.getSplitter().splitLines(clean, maxWidth, Style.EMPTY));
     }
 }
