@@ -39,6 +39,14 @@ public class DriftwardFixes {
         Registries.BLOCK,
         ResourceLocation.fromNamespaceAndPath("driftward", "end_base")
     );
+    public static final TagKey<Block> ERODE = TagKey.create(
+        Registries.BLOCK,
+        ResourceLocation.fromNamespaceAndPath("driftward", "erode")
+    );
+    public static final TagKey<Block> REMOVE_FROM_CRASHED_SHIP = TagKey.create(
+        Registries.BLOCK,
+        ResourceLocation.fromNamespaceAndPath("driftward", "remove_from_crashed_ship")
+    );
 
     public DriftwardFixes(IEventBus modEventBus, ModContainer container) {
         container.registerConfig(ModConfig.Type.SERVER, Config.SPEC);

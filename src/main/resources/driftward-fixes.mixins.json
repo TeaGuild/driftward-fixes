@@ -28,7 +28,9 @@
     "yungs_better_end_island.EndSpikeUtilsMixin",
     "client.LavenderStructureOverlayRendererMixin",
     "betterend.CrashedShipFeatureMixin",
-    "betterend.NBTFeatureMixin"
+    "betterend.CrashedShipFeatureReplacerMixin",
+    "betterend.NBTFeatureMixin",
+    "betterend.StructureErodeMixin"
   ],
   "client": [
     "client.BeeMovieMixin",
