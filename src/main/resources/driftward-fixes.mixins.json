@@ -6,6 +6,7 @@
   "plugin": "ink.astrius.driftwardfixes.DriftwardMixinPlugin",
   "mixins": [
     "SpoutFillPurityMixin",
+    "EmiLootLootJSCompat",
     "cobblegen.FluidInteractionRegistryMixin",
     "cobblegen.LavaFluidMixin",
     "cobblegen.FluidReactionsMixin",

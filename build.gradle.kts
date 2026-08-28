@@ -2,7 +2,7 @@ plugins {
     id("net.neoforged.moddev") version "2.0.78"
 }
 
-version = "1.24"
+version = "1.25"
 group = "ink.astrius"
 base { archivesName = "driftward-fixes" }
 
@@ -92,6 +92,7 @@ dependencies {
     implementation("maven.modrinth:yungs-better-end-island:1.21.1-NeoForge-3.1.2")
     implementation("maven.modrinth:betterend-neoforge:21.0.33")
     implementation("maven.modrinth:bclib-neoforge:21.0.26")
+    implementation("maven.modrinth:emi-loot:0.7.9+1.21+neoforge")
     jarJar(implementation("com.github.Fallen-Breath.conditional-mixin:conditional-mixin-neoforge:0.6.4")!!)
     // a stub file with most of the code stripped. needed to compile LavenderStructureOverlayRendererMixin
     // as it uses a private class from lavender and moddevgradle only access transforms minecraft itself
