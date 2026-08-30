@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static ink.astrius.driftwardfixes.DriftwardFixes.CUSTOM_ENDER_PEARLS;
+import static ink.astrius.driftwardfixes.DriftwardTags.CUSTOM_ENDER_PEARLS;
 
 // because GrindstoneInputSlotMixin is required for this and it depends on supplementaries
 @Restriction(require = @Condition("supplementaries"))

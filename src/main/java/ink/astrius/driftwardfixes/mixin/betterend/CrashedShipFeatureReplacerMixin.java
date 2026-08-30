@@ -9,7 +9,7 @@ import org.betterx.bclib.api.v2.levelgen.features.features.DefaultFeature;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-import static ink.astrius.driftwardfixes.DriftwardFixes.REMOVE_FROM_CRASHED_SHIP;
+import static ink.astrius.driftwardfixes.DriftwardTags.REMOVE_FROM_CRASHED_SHIP;
 
 @Mixin(targets = "org.betterx.betterend.world.features.CrashedShipFeature$1")
 public class CrashedShipFeatureReplacerMixin {

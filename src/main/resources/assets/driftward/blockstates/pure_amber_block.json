@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "driftward:block/pure_amber_block"
+    }
+  }
+}

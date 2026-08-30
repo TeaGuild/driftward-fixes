@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "driftward:block/small_amber_bud",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "driftward:block/small_amber_bud",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "driftward:block/small_amber_bud",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "driftward:block/small_amber_bud",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "driftward:block/small_amber_bud"
+    },
+    "facing=west": {
+      "model": "driftward:block/small_amber_bud",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

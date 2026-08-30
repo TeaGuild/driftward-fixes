@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static ink.astrius.driftwardfixes.DriftwardFixes.ERODE;
+import static ink.astrius.driftwardfixes.DriftwardTags.ERODE;
 
 @Mixin(StructureErode.class)
 public class StructureErodeMixin {

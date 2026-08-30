@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/small_amethyst_bud",
+  "textures": {
+    "layer0": "driftward:block/small_amber_bud"
+  }
+}

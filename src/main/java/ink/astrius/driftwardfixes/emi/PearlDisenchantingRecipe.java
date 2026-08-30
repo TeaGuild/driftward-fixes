@@ -11,7 +11,7 @@ import net.minecraft.world.item.Items;
 
 import java.util.List;
 
-import static ink.astrius.driftwardfixes.DriftwardFixes.CUSTOM_ENDER_PEARLS;
+import static ink.astrius.driftwardfixes.DriftwardTags.CUSTOM_ENDER_PEARLS;
 
 public class PearlDisenchantingRecipe implements EmiRecipe {
     private static final ResourceLocation BACKGROUND = ResourceLocation.withDefaultNamespace("textures/gui/container/grindstone.png");

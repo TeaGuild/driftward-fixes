@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static ink.astrius.driftwardfixes.DriftwardFixes.CUSTOM_ENDER_PEARLS;
+import static ink.astrius.driftwardfixes.DriftwardTags.CUSTOM_ENDER_PEARLS;
 
 @Restriction(require = @Condition("supplementaries"))
 @Mixin(targets = {"net.minecraft.world.inventory.GrindstoneMenu$2", "net.minecraft.world.inventory.GrindstoneMenu$3"})

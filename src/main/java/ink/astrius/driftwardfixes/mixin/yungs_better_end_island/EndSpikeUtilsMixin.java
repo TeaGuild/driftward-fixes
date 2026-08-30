@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import static ink.astrius.driftwardfixes.DriftwardFixes.END_BASE;
+import static ink.astrius.driftwardfixes.DriftwardTags.END_BASE;
 
 @Restriction(require = @Condition("betterendisland"))
 @Mixin(EndSpikeUtils.class)

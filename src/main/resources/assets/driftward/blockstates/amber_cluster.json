@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "driftward:block/amber_cluster",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "driftward:block/amber_cluster",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "driftward:block/amber_cluster",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "driftward:block/amber_cluster",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "driftward:block/amber_cluster"
+    },
+    "facing=west": {
+      "model": "driftward:block/amber_cluster",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

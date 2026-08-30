@@ -20,7 +20,14 @@ config = "driftward-fixes.gameplay.mixins.json"
 
 [[dependencies.driftwardfixes]]
 modId = "neoforge"
-type = "required"
 versionRange = "[21.1,)"
-ordering = "NONE"
-side = "BOTH"
+
+[[dependencies.driftwardfixes]]
+modId = "betterend"
+type = "optional"
+ordering = "AFTER"
+
+[[dependencies.driftwardfixes]]
+modId = "wover"
+type = "optional"
+ordering = "AFTER"

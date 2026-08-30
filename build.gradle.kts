@@ -90,21 +90,31 @@ dependencies {
     implementation("com.github.TheDeathlyCow:thermoo:v4.8.1-neoforge")
     implementation("maven.modrinth:power-grid:8EtGIOFr")  // 0.5.5.1
     implementation("maven.modrinth:yungs-better-end-island:1.21.1-NeoForge-3.1.2")
-    implementation("maven.modrinth:betterend-neoforge:21.0.33")
+    implementation("maven.modrinth:betterend-neoforge:21.0.34")
     implementation("maven.modrinth:bclib-neoforge:21.0.26")
     implementation("maven.modrinth:emi-loot:0.7.9+1.21+neoforge")
+    implementation("maven.modrinth:spectrum:1.12.5-1.21.1-neo")
+    implementation("maven.modrinth:fractal-lib:1.7.0+1.21.1-neoforge")
     jarJar(implementation("com.github.Fallen-Breath.conditional-mixin:conditional-mixin-neoforge:0.6.4")!!)
     // a stub file with most of the code stripped. needed to compile LavenderStructureOverlayRendererMixin
     // as it uses a private class from lavender and moddevgradle only access transforms minecraft itself
     // at compile time
     // https://github.com/vanutp-forks/lavender/tree/1.21-stripped
-    implementation(files("libs/lavender-0.1.15-stub+1.21.jar"))
+    compileOnly(files("libs/lavender-0.1.15-stub+1.21.jar"))
     compileOnly("dev.emi:emi-neoforge:1.1.24+1.21.1:api")
     runtimeOnly("dev.emi:emi-neoforge:1.1.24+1.21.1")
     runtimeOnly("maven.modrinth:moonlight:CitoQHqE")
     runtimeOnly("maven.modrinth:yacl:3.8.2+1.21.1-neoforge")
     runtimeOnly("maven.modrinth:geckolib:tPkJmim6")  // 4.9.2
     runtimeOnly("maven.modrinth:architectury-api:13.0.11+neoforge")
+    runtimeOnly("maven.modrinth:fzzy-config:0.7.6+1.21+neoforge")
+    runtimeOnly("maven.modrinth:wunderlib-neoforge:21.0.10")
+    runtimeOnly("maven.modrinth:worldweaver-neoforge:21.0.25")
+    runtimeOnly("maven.modrinth:curios:9.5.1+1.21.1")
+    runtimeOnly("maven.modrinth:modonomicon:jH6bsw4F")  // 1.21.1-1.120.4
+    runtimeOnly("maven.modrinth:revelationary:1.5.1+1.21.1")
+    runtimeOnly("maven.modrinth:yungs-api:1.21.1-NeoForge-5.1.8")
+    runtimeOnly("maven.modrinth:kotlin-for-forge:5.12.0")
 }
 
 tasks.processResources {

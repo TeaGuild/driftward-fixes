@@ -1,13 +1,6 @@
 package ink.astrius.driftwardfixes;
 
-import net.minecraft.advancements.CriterionTrigger;
 import net.minecraft.advancements.critereon.ItemUsedOnLocationTrigger;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -16,42 +9,26 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.fluids.FluidInteractionRegistry;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
 
-@Mod("driftwardfixes")
+@Mod(DriftwardFixes.MOD_ID)
 public class DriftwardFixes {
     public static final String MOD_ID = "driftwardfixes";
-    public static final DeferredRegister<CriterionTrigger<?>> CRITERIA_TRIGGERS = DeferredRegister.create(
-        BuiltInRegistries.TRIGGER_TYPES,
-        MOD_ID
-    );
     public static final Supplier<ItemUsedOnLocationTrigger>
-        ROTATED_WITH_WRENCH = CRITERIA_TRIGGERS.register(
+        ROTATED_WITH_WRENCH = Driftward.CRITERIA_TRIGGERS.register(
         "rotated_with_wrench", ItemUsedOnLocationTrigger::new
     );
-    public static final TagKey<Item> CUSTOM_ENDER_PEARLS = TagKey.create(
-        Registries.ITEM,
-        ResourceLocation.fromNamespaceAndPath("endermanoverhaul", "ender_pearls")
-    );
-    public static final TagKey<Block> END_BASE = TagKey.create(
-        Registries.BLOCK,
-        ResourceLocation.fromNamespaceAndPath("driftward", "end_base")
-    );
-    public static final TagKey<Block> ERODE = TagKey.create(
-        Registries.BLOCK,
-        ResourceLocation.fromNamespaceAndPath("driftward", "erode")
-    );
-    public static final TagKey<Block> REMOVE_FROM_CRASHED_SHIP = TagKey.create(
-        Registries.BLOCK,
-        ResourceLocation.fromNamespaceAndPath("driftward", "remove_from_crashed_ship")
-    );
+
+    public static final CrystallarieumAmberCompat crystallarieumAmberCompat = new CrystallarieumAmberCompat();
 
     public DriftwardFixes(IEventBus modEventBus, ModContainer container) {
         container.registerConfig(ModConfig.Type.SERVER, Config.SPEC);
         modEventBus.addListener(DriftwardFixes::onSetup);
-        CRITERIA_TRIGGERS.register(modEventBus);
+        Driftward.CRITERIA_TRIGGERS.register(modEventBus);
+        Driftward.BLOCKS.register(modEventBus);
+        Driftward.ITEMS.register(modEventBus);
+        crystallarieumAmberCompat.register(modEventBus);
     }
 
     public static void onSetup(final FMLCommonSetupEvent event) {
