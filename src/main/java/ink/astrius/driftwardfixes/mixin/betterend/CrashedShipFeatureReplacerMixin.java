@@ -1,5 +1,7 @@
 package ink.astrius.driftwardfixes.mixin.betterend;
 
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
@@ -11,6 +13,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 
 import static ink.astrius.driftwardfixes.DriftwardTags.REMOVE_FROM_CRASHED_SHIP;
 
+@Restriction(require = @Condition("betterend"))
 @Mixin(targets = "org.betterx.betterend.world.features.CrashedShipFeature$1")
 public class CrashedShipFeatureReplacerMixin {
     @SuppressWarnings("OverwriteAuthorRequired")

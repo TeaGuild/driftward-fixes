@@ -1,5 +1,7 @@
 package ink.astrius.driftwardfixes.mixin.betterend;
 
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
@@ -11,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static ink.astrius.driftwardfixes.DriftwardTags.ERODE;
 
+@Restriction(require = @Condition("betterend"))
 @Mixin(StructureErode.class)
 public class StructureErodeMixin {
     @Inject(method = "ignore", at = @At("HEAD"), cancellable = true)
