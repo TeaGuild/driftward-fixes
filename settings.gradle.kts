@@ -4,4 +4,4 @@ pluginManagement {
         maven { url = uri("https://maven.neoforged.net/releases") }
     }
 }
-rootProject.name = "driftward-fixes"
+rootProject.name = "driftward-mod"

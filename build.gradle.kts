@@ -2,9 +2,9 @@ plugins {
     id("net.neoforged.moddev") version "2.0.78"
 }
 
-version = "1.27"
+version = "1.28"
 group = "ink.astrius"
-base { archivesName = "driftward-fixes" }
+base { archivesName = "driftward-mod" }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
@@ -56,7 +56,7 @@ repositories {
 neoForge {
     version = "21.1.247"
     mods {
-        create("driftwardfixes") { sourceSet(sourceSets.main.get()) }
+        create("driftward") { sourceSet(sourceSets.main.get()) }
     }
     parchment {
         minecraftVersion = "1.21.1"

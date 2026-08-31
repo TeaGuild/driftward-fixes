@@ -3,13 +3,6 @@ loaderVersion = "[4,)"
 license = "MIT"
 
 [[mods]]
-modId = "driftwardfixes"
-version = "${version}"
-displayName = "Driftward Fixes"
-description = "Driftward modpack mechanics, integrations and fixes"
-authors = "vanuta, Sol"
-
-[[mods]]
 modId = "driftward"
 version = "${version}"
 displayName = "Driftward"
@@ -17,24 +10,18 @@ description = "Driftward modpack mechanics, integrations and fixes"
 authors = "vanuta, Sol"
 
 [[mixins]]
-config = "driftward-fixes.mixins.json"
+config = "driftward.mixins.json"
 
-[[mixins]]
-config = "driftward-fixes.aeronautics.mixins.json"
-
-[[mixins]]
-config = "driftward-fixes.gameplay.mixins.json"
-
-[[dependencies.driftwardfixes]]
+[[dependencies.driftward]]
 modId = "neoforge"
 versionRange = "[21.1,)"
 
-[[dependencies.driftwardfixes]]
+[[dependencies.driftward]]
 modId = "betterend"
 type = "optional"
 ordering = "AFTER"
 
-[[dependencies.driftwardfixes]]
+[[dependencies.driftward]]
 modId = "wover"
 type = "optional"
 ordering = "AFTER"

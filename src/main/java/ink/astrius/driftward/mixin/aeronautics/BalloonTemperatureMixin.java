@@ -1,0 +1,78 @@
+package ink.astrius.driftward.mixin.aeronautics;
+
+import com.github.thedeathlycow.thermoo.api.environment.EnvironmentLookup;
+import com.github.thedeathlycow.thermoo.api.environment.component.EnvironmentComponentTypes;
+import com.github.thedeathlycow.thermoo.api.environment.component.TemperatureRecordComponent;
+import com.github.thedeathlycow.thermoo.api.util.TemperatureRecord;
+import com.github.thedeathlycow.thermoo.api.util.TemperatureUnit;
+import dev.eriksonn.aeronautics.content.blocks.hot_air.balloon.Balloon;
+import dev.eriksonn.aeronautics.content.blocks.hot_air.balloon.ServerBalloon;
+import dev.ryanhcode.sable.Sable;
+import dev.ryanhcode.sable.companion.math.Pose3dc;
+import dev.ryanhcode.sable.sublevel.ServerSubLevel;
+import ink.astrius.driftward.Config;
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
+import org.joml.Vector3dc;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+/**
+ * Makes hot-air and steam balloon lift react to the ambient Thermoo temperature where the
+ * airship actually is in the world (resolved through Sable's sub-level pose, since the balloon's
+ * stored position is in plot-local coordinates). Colder air = more lift, hotter = less, clamped
+ * and configurable. Levitite uses a separate Sable floating-material path and is not touched here,
+ * because this scales {@code totalLift}, which only aggregates {@code LiftingGasType} gases.
+ */
+@Restriction(
+    require = {
+        @Condition("aeronautics"),
+        @Condition("thermoo")
+    }
+)
+@Mixin(ServerBalloon.class)
+public abstract class BalloonTemperatureMixin {
+
+    @Shadow
+    private double totalLift;
+
+    @Inject(method = "updateGasAmounts", at = @At("TAIL"))
+    private void driftward$scaleLiftByTemperature(CallbackInfo ci) {
+        if (!Config.BALLOON_TEMPERATURE_ENABLED.get() || this.totalLift == 0.0) {
+            return;
+        }
+        // level + controllerPos are declared on the Balloon base class; reach them through the
+        // accessor and the public getter rather than @Shadow (inherited fields don't resolve).
+        Level level = ((BalloonAccessor) (Object) this).driftward$level();
+        BlockPos controllerPos = ((Balloon) (Object) this).getControllerPos();
+        // The balloon's controllerPos is plot-local; resolve the contraption's real world pose.
+        if (!(Sable.HELPER.getContaining(level, (Vec3i) controllerPos) instanceof ServerSubLevel subLevel)) {
+            return;
+        }
+        ServerLevel serverLevel = subLevel.getLevel();
+        Pose3dc pose = subLevel.logicalPose();
+        Vector3dc worldPos = pose.position();
+        BlockPos samplePos = BlockPos.containing(worldPos.x(), worldPos.y(), worldPos.z());
+
+        TemperatureRecord record = EnvironmentLookup.getInstance()
+            .findEnvironmentComponents(serverLevel, samplePos)
+            .getOrDefault(EnvironmentComponentTypes.TEMPERATURE, TemperatureRecordComponent.DEFAULT);
+        double ambientC = record.valueInUnit(TemperatureUnit.CELSIUS);
+
+        double reference = Config.BALLOON_REFERENCE_TEMP_C.get();
+        double sensitivity = Config.BALLOON_SENSITIVITY_PER_C.get();
+        double min = Config.BALLOON_MIN_MULTIPLIER.get();
+        double max = Config.BALLOON_MAX_MULTIPLIER.get();
+
+        double multiplier = Mth.clamp(1.0 + sensitivity * (reference - ambientC), min, max);
+        this.totalLift *= multiplier;
+    }
+}

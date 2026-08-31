@@ -25,7 +25,7 @@ neither in Driftward).
 The mixins are split across three configs so optional integrations don't fail the load when their
 target mods are absent:
 
-- `driftward-fixes.mixins.json` — **required**: `ChatRelayMixin`, `GrapplingHookEntityMixin`, `SpoutFillPurityMixin`, and (client) `BeeMovieMixin`.
+- `driftward.mixins.json` — **required**: `ChatRelayMixin`, `GrapplingHookEntityMixin`, `SpoutFillPurityMixin`, and (client) `BeeMovieMixin`.
 - `driftward-fixes.aeronautics.mixins.json` — optional: `BalloonAccessor`, `BalloonTemperatureMixin`.
 - `driftward-fixes.gameplay.mixins.json` — optional: `CactusGlassPaneMixin`.
 
