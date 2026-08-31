@@ -9,6 +9,13 @@ displayName = "Driftward Fixes"
 description = "Driftward modpack mechanics, integrations and fixes"
 authors = "vanuta, Sol"
 
+[[mods]]
+modId = "driftward"
+version = "${version}"
+displayName = "Driftward"
+description = "Driftward modpack mechanics, integrations and fixes"
+authors = "vanuta, Sol"
+
 [[mixins]]
 config = "driftward-fixes.mixins.json"
 
