@@ -2,7 +2,7 @@ plugins {
     id("net.neoforged.moddev") version "2.0.78"
 }
 
-version = "1.28"
+version = "1.29"
 group = "ink.astrius"
 base { archivesName = "driftward-mod" }
 
@@ -51,6 +51,7 @@ repositories {
     repository("https://maven.theillusivec4.top", "top.theillusivec4.curios")
     repository("https://maven.squiddev.cc", "cc.tweaked")
     repository("https://repo.sleeping.town/", "dev.emi")
+    repository("https://maven.bawnorton.com/releases", "com.github.bawnorton.mixinsquared")
 }
 
 neoForge {
@@ -92,10 +93,14 @@ dependencies {
     implementation("maven.modrinth:yungs-better-end-island:1.21.1-NeoForge-3.1.2")
     implementation("maven.modrinth:betterend-neoforge:21.0.34")
     implementation("maven.modrinth:bclib-neoforge:21.0.26")
+    implementation("maven.modrinth:worldweaver-neoforge:21.0.25")
     implementation("maven.modrinth:emi-loot:0.7.9+1.21+neoforge")
     implementation("maven.modrinth:spectrum:1.12.5-1.21.1-neo")
     implementation("maven.modrinth:fractal-lib:1.7.0+1.21.1-neoforge")
+    implementation("maven.modrinth:lmft:poGMd0AE")  // 1.1.1+1.21.9
     jarJar(implementation("com.github.Fallen-Breath.conditional-mixin:conditional-mixin-neoforge:0.6.4")!!)
+    compileOnly(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-common:0.3.7-beta.3")!!)
+    jarJar(implementation("com.github.bawnorton.mixinsquared:mixinsquared-neoforge:0.3.7-beta.3")!!)
     // a stub file with most of the code stripped. needed to compile LavenderStructureOverlayRendererMixin
     // as it uses a private class from lavender and moddevgradle only access transforms minecraft itself
     // at compile time
@@ -109,7 +114,6 @@ dependencies {
     runtimeOnly("maven.modrinth:architectury-api:13.0.11+neoforge")
     runtimeOnly("maven.modrinth:fzzy-config:0.7.6+1.21+neoforge")
     runtimeOnly("maven.modrinth:wunderlib-neoforge:21.0.10")
-    runtimeOnly("maven.modrinth:worldweaver-neoforge:21.0.25")
     runtimeOnly("maven.modrinth:curios:9.5.1+1.21.1")
     runtimeOnly("maven.modrinth:modonomicon:jH6bsw4F")  // 1.21.1-1.120.4
     runtimeOnly("maven.modrinth:revelationary:1.5.1+1.21.1")

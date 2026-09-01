@@ -25,3 +25,6 @@ ordering = "AFTER"
 modId = "wover"
 type = "optional"
 ordering = "AFTER"
+
+[[dependencies.driftward]]
+modId = "lmft"
