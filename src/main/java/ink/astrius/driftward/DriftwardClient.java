@@ -8,6 +8,8 @@ import net.neoforged.fml.javafmlmod.FMLModContainer;
 @Mod(value = Driftward.MOD_ID, dist = Dist.CLIENT)
 public class DriftwardClient {
     public DriftwardClient(FMLModContainer container, IEventBus modBus, Dist dist) {
-        modBus.addListener(Driftward.crystallarieumAmberCompat::registerClient);
+        if (Driftward.crystallarieumAmberCompat != null) {
+            modBus.addListener(Driftward.crystallarieumAmberCompat::registerClient);
+        }
     }
 }

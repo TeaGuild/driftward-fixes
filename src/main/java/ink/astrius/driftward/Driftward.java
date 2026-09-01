@@ -4,6 +4,7 @@ import net.minecraft.advancements.critereon.ItemUsedOnLocationTrigger;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -20,7 +21,9 @@ public class Driftward {
         "rotated_with_wrench", ItemUsedOnLocationTrigger::new
     );
 
-    public static final CrystallarieumAmberCompat crystallarieumAmberCompat = new CrystallarieumAmberCompat();
+    public static final CrystallarieumAmberCompat crystallarieumAmberCompat = ModList.get().isLoaded("spectrum")
+        ? new CrystallarieumAmberCompat()
+        : null;
 
     public Driftward(IEventBus modEventBus, ModContainer container) {
         container.registerConfig(ModConfig.Type.SERVER, Config.SPEC);
@@ -28,7 +31,9 @@ public class Driftward {
         DriftwardReg.CRITERIA_TRIGGERS.register(modEventBus);
         DriftwardReg.BLOCKS.register(modEventBus);
         DriftwardReg.ITEMS.register(modEventBus);
-        crystallarieumAmberCompat.register(modEventBus);
+        if (crystallarieumAmberCompat != null) {
+            crystallarieumAmberCompat.register(modEventBus);
+        }
     }
 
     public static void onSetup(final FMLCommonSetupEvent event) {
