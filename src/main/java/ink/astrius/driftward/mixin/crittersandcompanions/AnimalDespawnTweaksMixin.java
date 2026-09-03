@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Restriction(require = @Condition("crittersandcompanions"))
 @Mixin(Animal.class)
-public class AnimalMixin {
+public class AnimalDespawnTweaksMixin {
     @Inject(
         method = "removeWhenFarAway",
         at = @At("HEAD"),

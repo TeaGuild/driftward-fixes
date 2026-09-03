@@ -1,0 +1,22 @@
+{
+  "type": "crittersandcompanions:replace_item",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "minecraft:entities/drowned"
+    },
+    {
+      "chance": 0.5,
+      "condition": "minecraft:random_chance"
+    }
+  ],
+  "items": [
+    {
+      "weight": 1,
+      "data": {
+        "id": "hybrid_aquatic:clam",
+        "Count": 1
+      }
+    }
+  ]
+}

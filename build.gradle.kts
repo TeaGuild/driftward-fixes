@@ -2,7 +2,7 @@ plugins {
     id("net.neoforged.moddev") version "2.0.78"
 }
 
-version = "1.29"
+version = "1.30"
 group = "ink.astrius"
 base { archivesName = "driftward-mod" }
 
@@ -50,8 +50,9 @@ repositories {
     )
     repository("https://maven.theillusivec4.top", "top.theillusivec4.curios")
     repository("https://maven.squiddev.cc", "cc.tweaked")
-    repository("https://repo.sleeping.town/", "dev.emi")
+    repository("https://repo.sleeping.town", "dev.emi")
     repository("https://maven.bawnorton.com/releases", "com.github.bawnorton.mixinsquared")
+    repository("https://maven.architectury.dev", "dev.architectury")
 }
 
 neoForge {
@@ -98,6 +99,8 @@ dependencies {
     implementation("maven.modrinth:spectrum:1.12.5-1.21.1-neo")
     implementation("maven.modrinth:fractal-lib:1.7.0+1.21.1-neoforge")
     implementation("maven.modrinth:lmft:poGMd0AE")  // 1.1.1+1.21.9
+    implementation("dev.architectury:architectury-neoforge:13.0.8")
+    implementation("maven.modrinth:hybrid-aquatic:1.6.9-neoforge")
     jarJar(implementation("com.github.Fallen-Breath.conditional-mixin:conditional-mixin-neoforge:0.6.4")!!)
     compileOnly(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-common:0.3.7-beta.3")!!)
     jarJar(implementation("com.github.bawnorton.mixinsquared:mixinsquared-neoforge:0.3.7-beta.3")!!)
