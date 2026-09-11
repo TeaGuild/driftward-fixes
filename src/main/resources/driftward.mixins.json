@@ -18,7 +18,6 @@
     "betterend.EndEnchantmentsMixin",
     "betterend.NBTFeatureMixin",
     "betterend.StructureErodeMixin",
-    "client.LavenderStructureOverlayRendererMixin",
     "cobblegen.FluidInteractionRegistryMixin",
     "cobblegen.FluidReactionsMixin",
     "cobblegen.LavaFluidMixin",
@@ -43,7 +42,8 @@
   ],
   "client": [
     "client.BeeMovieMixin",
-    "client.ClientRopeItemHandlerMixin"
+    "client.ClientRopeItemHandlerMixin",
+    "client.LavenderStructureOverlayRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
