@@ -53,6 +53,7 @@ repositories {
     repository("https://repo.sleeping.town", "dev.emi")
     repository("https://maven.bawnorton.com/releases", "com.github.bawnorton.mixinsquared")
     repository("https://maven.architectury.dev", "dev.architectury")
+    repository("https://maven.shedaniel.me", "me.shedaniel.cloth")
 }
 
 neoForge {
@@ -88,8 +89,14 @@ dependencies {
     implementation("dev.ryanhcode.sable:sable-neoforge-1.21.1:2.0.3")
     implementation("dev.simulated_team.simulated:simulated-neoforge-1.21.1:1.3.0")
     runtimeOnly("mezz.jei:jei-1.21.1-neoforge:19.43.0.392")
-    implementation("maven.modrinth:thirst-was-reclaimed:1.21.1-3.0.4")
+    implementation("maven.modrinth:thirst-was-reclaimed:1.21.1-3.0.5")
     implementation("com.github.TheDeathlyCow:thermoo:v4.8.1-neoforge")
+    compileOnly("dev.yumi.mc.core:yumi-mc-foundation:1.0.0-beta.1+1.21.1") {
+        attributes {
+            attribute(Attribute.of("net.minecraft.mappings", String::class.java), "mojmap")
+        }
+    }
+    compileOnly("me.shedaniel.cloth:cloth-config-neoforge:15.0.140")
     implementation("maven.modrinth:scorchful:0.15.2+1.21.1-neoforge")
     implementation("maven.modrinth:frostiful:2.3.3+1.21.1-neoforge")
     implementation("maven.modrinth:power-grid:8EtGIOFr")  // 0.5.5.1
