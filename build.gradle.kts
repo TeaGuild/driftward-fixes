@@ -90,6 +90,8 @@ dependencies {
     runtimeOnly("mezz.jei:jei-1.21.1-neoforge:19.43.0.392")
     implementation("maven.modrinth:thirst-was-reclaimed:1.21.1-3.0.4")
     implementation("com.github.TheDeathlyCow:thermoo:v4.8.1-neoforge")
+    implementation("maven.modrinth:scorchful:0.15.2+1.21.1-neoforge")
+    implementation("maven.modrinth:frostiful:2.3.3+1.21.1-neoforge")
     implementation("maven.modrinth:power-grid:8EtGIOFr")  // 0.5.5.1
     implementation("maven.modrinth:yungs-better-end-island:1.21.1-NeoForge-3.1.2")
     implementation("maven.modrinth:betterend-neoforge:21.0.34")
