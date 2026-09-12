@@ -39,6 +39,8 @@
     "scorchful.ReplaceThirstPluginMixin",
     "tags.LMFTCommonAccessor",
     "tags.TagLoaderMixin",
+    "chunk_unloading.ChunkMapMixin",
+    "chunk_unloading.GenerationChunkHolderMixin",
     "wrench.IWrenchableMixin",
     "wrench.WrenchItemMixin",
     "yungs_better_end_island.DragonRespawnStageMixin",
