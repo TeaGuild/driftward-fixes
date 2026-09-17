@@ -1,0 +1,4 @@
+{
+  "driftward.settings.end_sea_layers": "End Sea layers",
+  "driftward.settings.end_sea_layers.desc": "The number of End Sea layers to render. 0 disables End Sea rendering"
+}

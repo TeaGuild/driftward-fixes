@@ -54,6 +54,7 @@ repositories {
     repository("https://maven.bawnorton.com/releases", "com.github.bawnorton.mixinsquared")
     repository("https://maven.architectury.dev", "dev.architectury")
     repository("https://maven.shedaniel.me", "me.shedaniel.cloth")
+    repository("https://maven.caffeinemc.net/releases", "net.caffeinemc")
 }
 
 neoForge {
@@ -80,6 +81,7 @@ neoForge {
 }
 
 dependencies {
+    implementation("net.caffeinemc:sodium-neoforge-api:0.8.13+mc1.21.1")
     implementation("maven.modrinth:critters-and-companions:kGomvo87")  // 2.6.2
     implementation("maven.modrinth:supplementaries:1.21.1-3.9.3")
     implementation("maven.modrinth:farmers-delight:1.21.1-1.3.2")
@@ -111,6 +113,7 @@ dependencies {
     implementation("maven.modrinth:lmft:poGMd0AE")  // 1.1.1+1.21.9
     implementation("dev.architectury:architectury-neoforge:13.0.8")
     implementation("maven.modrinth:hybrid-aquatic:1.6.9-neoforge")
+    implementation("maven.modrinth:enderman-overhaul:2.0.3")
     jarJar(implementation("com.github.Fallen-Breath.conditional-mixin:conditional-mixin-neoforge:0.6.4")!!)
     compileOnly(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-common:0.3.7-beta.3")!!)
     jarJar(implementation("com.github.bawnorton.mixinsquared:mixinsquared-neoforge:0.3.7-beta.3")!!)

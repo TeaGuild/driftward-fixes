@@ -10,7 +10,7 @@ import dev.eriksonn.aeronautics.content.blocks.hot_air.balloon.ServerBalloon;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
-import ink.astrius.driftward.Config;
+import ink.astrius.driftward.config.ServerConfig;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.core.BlockPos;
@@ -46,7 +46,7 @@ public abstract class BalloonTemperatureMixin {
 
     @Inject(method = "updateGasAmounts", at = @At("TAIL"))
     private void driftward$scaleLiftByTemperature(CallbackInfo ci) {
-        if (!Config.BALLOON_TEMPERATURE_ENABLED.get() || this.totalLift == 0.0) {
+        if (!ServerConfig.BALLOON_TEMPERATURE_ENABLED.get() || this.totalLift == 0.0) {
             return;
         }
         // level + controllerPos are declared on the Balloon base class; reach them through the
@@ -67,10 +67,10 @@ public abstract class BalloonTemperatureMixin {
             .getOrDefault(EnvironmentComponentTypes.TEMPERATURE, TemperatureRecordComponent.DEFAULT);
         double ambientC = record.valueInUnit(TemperatureUnit.CELSIUS);
 
-        double reference = Config.BALLOON_REFERENCE_TEMP_C.get();
-        double sensitivity = Config.BALLOON_SENSITIVITY_PER_C.get();
-        double min = Config.BALLOON_MIN_MULTIPLIER.get();
-        double max = Config.BALLOON_MAX_MULTIPLIER.get();
+        double reference = ServerConfig.BALLOON_REFERENCE_TEMP_C.get();
+        double sensitivity = ServerConfig.BALLOON_SENSITIVITY_PER_C.get();
+        double min = ServerConfig.BALLOON_MIN_MULTIPLIER.get();
+        double max = ServerConfig.BALLOON_MAX_MULTIPLIER.get();
 
         double multiplier = Mth.clamp(1.0 + sensitivity * (reference - ambientC), min, max);
         this.totalLift *= multiplier;

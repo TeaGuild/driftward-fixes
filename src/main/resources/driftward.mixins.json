@@ -58,6 +58,7 @@
   "client": [
     "client.BeeMovieMixin",
     "client.ClientRopeItemHandlerMixin",
+    "client.EndSeaRendererMixin",
     "client.LavenderStructureOverlayRendererMixin"
   ],
   "injectors": {

@@ -1,13 +1,8 @@
-package ink.astrius.driftward;
+package ink.astrius.driftward.config;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
 
-/**
- * Driftward Fixes configuration. Currently only the balloon temperature integration
- * (Create Aeronautics hot-air/steam lift reacting to the Thermoo/Scorchful/Frostiful
- * ambient temperature). Server-side, since balloon physics is server-authoritative.
- */
-public final class Config {
+public final class ServerConfig {
     public static final ModConfigSpec SPEC;
 
     public static final ModConfigSpec.BooleanValue BALLOON_TEMPERATURE_ENABLED;
@@ -48,5 +43,5 @@ public final class Config {
         SPEC = b.build();
     }
 
-    private Config() {}
+    private ServerConfig() {}
 }

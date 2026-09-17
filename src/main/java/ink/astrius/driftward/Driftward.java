@@ -1,5 +1,7 @@
 package ink.astrius.driftward;
 
+import ink.astrius.driftward.config.ClientConfig;
+import ink.astrius.driftward.config.ServerConfig;
 import net.minecraft.advancements.critereon.ItemUsedOnLocationTrigger;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.IEventBus;
@@ -7,6 +9,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.fluids.FluidInteractionRegistry;
@@ -26,8 +29,11 @@ public class Driftward {
         : null;
 
     public Driftward(IEventBus modEventBus, ModContainer container) {
-        container.registerConfig(ModConfig.Type.SERVER, Config.SPEC);
+        container.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
+        container.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
         modEventBus.addListener(Driftward::onSetup);
+        modEventBus.addListener(Driftward::onConfigLoad);
+        modEventBus.addListener(Driftward::onConfigReload);
         DriftwardReg.CRITERIA_TRIGGERS.register(modEventBus);
         DriftwardReg.BLOCKS.register(modEventBus);
         DriftwardReg.ITEMS.register(modEventBus);
@@ -46,5 +52,17 @@ public class Driftward {
                     : Blocks.COBBLED_DEEPSLATE.defaultBlockState()
             )
         );
+    }
+
+    public static void onConfigLoad(final ModConfigEvent.Loading event) {
+        if (event.getConfig().getType() == ModConfig.Type.CLIENT) {
+            ClientConfig.onConfigReload();
+        }
+    }
+
+    public static void onConfigReload(final ModConfigEvent.Reloading event) {
+        if (event.getConfig().getType() == ModConfig.Type.CLIENT) {
+            ClientConfig.onConfigReload();
+        }
     }
 }
