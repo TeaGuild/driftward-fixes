@@ -8,6 +8,7 @@
     "AllowCopyBlockEntityDataMixin",
     "CactusGlassPaneMixin",
     "CampfireLitByDefaultMixin",
+    "CatSitOnComputerMixin",
     "ContraptionColliderMixin",
     "DeployerHandlerMixin",
     "EmiLootLootJSCompat",
