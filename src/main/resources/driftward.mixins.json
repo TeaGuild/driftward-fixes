@@ -7,6 +7,7 @@
   "mixins": [
     "AllowCopyBlockEntityDataMixin",
     "CactusGlassPaneMixin",
+    "CampfireLitByDefaultMixin",
     "ContraptionColliderMixin",
     "DeployerHandlerMixin",
     "EmiLootLootJSCompat",
