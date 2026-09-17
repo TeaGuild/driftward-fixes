@@ -13,6 +13,7 @@
     "DeployerHandlerMixin",
     "EmiLootLootJSCompat",
     "EnableBundlesMixin",
+    "EndermanOverhaulEndVeilMixin",
     "SpoutFillPurityMixin",
     "TickingBackportMixin",
     "aeronautics.BalloonAccessor",
