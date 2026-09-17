@@ -27,4 +27,9 @@ type = "optional"
 ordering = "AFTER"
 
 [[dependencies.driftward]]
+modId = "ccterminals"
+type = "optional"
+ordering = "AFTER"
+
+[[dependencies.driftward]]
 modId = "lmft"

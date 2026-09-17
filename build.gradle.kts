@@ -92,6 +92,7 @@ dependencies {
     implementation("dev.simulated_team.simulated:simulated-neoforge-1.21.1:1.3.0")
     runtimeOnly("mezz.jei:jei-1.21.1-neoforge:19.43.0.392")
     implementation("cc.tweaked:cc-tweaked-1.21.1-forge:1.120.2")
+    implementation("maven.modrinth:cc-terminals:3VT1i1B2")  // 0.1.1
     implementation("maven.modrinth:thirst-was-reclaimed:1.21.1-3.0.5")
     implementation("com.github.TheDeathlyCow:thermoo:v4.8.1-neoforge")
     compileOnly("dev.yumi.mc.core:yumi-mc-foundation:1.0.0-beta.1+1.21.1") {

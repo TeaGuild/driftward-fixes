@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import dan200.computercraft.shared.ModRegistry;
 import dan200.computercraft.shared.computer.blocks.ComputerBlock;
 import dan200.computercraft.shared.computer.core.ComputerState;
+import ink.astrius.driftward.Driftward;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.core.BlockPos;
@@ -39,6 +40,10 @@ public class CatSitOnComputerMixin {
         }
         final var isMonitor = blockstate.is(ModRegistry.Blocks.MONITOR_NORMAL.get()) || blockstate.is(ModRegistry.Blocks.MONITOR_ADVANCED.get());
         if (isMonitor) {
+            cir.setReturnValue(true);
+        }
+        final var isTerminal = Driftward.TERMINAL_NORMAL != null && blockstate.is(Driftward.TERMINAL_NORMAL) || blockstate.is(Driftward.TERMINAL_ADVANCED);
+        if (isTerminal) {
             cir.setReturnValue(true);
         }
     }
