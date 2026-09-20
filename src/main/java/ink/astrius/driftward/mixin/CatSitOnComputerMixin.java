@@ -42,7 +42,7 @@ public class CatSitOnComputerMixin {
         if (isMonitor) {
             cir.setReturnValue(true);
         }
-        final var isTerminal = Driftward.TERMINAL_NORMAL != null && blockstate.is(Driftward.TERMINAL_NORMAL) || blockstate.is(Driftward.TERMINAL_ADVANCED);
+        final var isTerminal = Driftward.TERMINAL_NORMAL != null && (blockstate.is(Driftward.TERMINAL_NORMAL) || blockstate.is(Driftward.TERMINAL_ADVANCED));
         if (isTerminal) {
             cir.setReturnValue(true);
         }
