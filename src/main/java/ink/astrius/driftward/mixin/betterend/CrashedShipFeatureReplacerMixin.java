@@ -11,7 +11,7 @@ import org.betterx.bclib.api.v2.levelgen.features.features.DefaultFeature;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-import static ink.astrius.driftward.DriftwardTags.REMOVE_FROM_CRASHED_SHIP;
+import static ink.astrius.driftward.reg.DriftwardTags.REMOVE_FROM_CRASHED_SHIP;
 
 @Restriction(require = @Condition("betterend"))
 @Mixin(targets = "org.betterx.betterend.world.features.CrashedShipFeature$1")

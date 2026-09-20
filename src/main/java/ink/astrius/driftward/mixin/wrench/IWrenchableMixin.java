@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static ink.astrius.driftward.Driftward.ROTATED_WITH_WRENCH;
+import static ink.astrius.driftward.reg.DriftwardReg.ROTATED_WITH_WRENCH;
 
 @Restriction(
     require = {

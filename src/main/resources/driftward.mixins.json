@@ -43,7 +43,7 @@
     "frostiful.FallingIcicleMixinMixin",
     "frostiful.FEntityTypesMixin",
     "grindstone.GrindstoneInputSlotMixin",
-    "grindstone.GrindstoneMenuMixin",
+    "grindstone.SupplementariesGrindstoneFixMixin",
     "rope.RopeItemMixin",
     "rope.RopeScenesMixin",
     "rope.RopeStrandHolderBehaviorMixin",

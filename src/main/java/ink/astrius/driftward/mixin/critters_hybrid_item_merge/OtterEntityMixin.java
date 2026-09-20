@@ -4,7 +4,6 @@ import com.llamalad7.mixinextras.expression.Definition;
 import com.llamalad7.mixinextras.expression.Expression;
 import dev.architectury.registry.registries.RegistrySupplier;
 import dev.hybridlabs.aquatic.item.HAItems;
-import ink.astrius.driftward.DriftwardTags;
 import io.github.bonsaistudi0s.crittersandcompanions.common.entity.OtterEntity;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;

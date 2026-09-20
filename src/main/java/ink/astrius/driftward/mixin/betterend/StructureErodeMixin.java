@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static ink.astrius.driftward.DriftwardTags.ERODE;
+import static ink.astrius.driftward.reg.DriftwardTags.ERODE;
 
 @Restriction(require = @Condition("betterend"))
 @Mixin(StructureErode.class)

@@ -3,7 +3,9 @@ package ink.astrius.driftward;
 import com.sashafiesta.ccterminals.TerminalBlock;
 import ink.astrius.driftward.config.ClientConfig;
 import ink.astrius.driftward.config.ServerConfig;
-import net.minecraft.advancements.critereon.ItemUsedOnLocationTrigger;
+import ink.astrius.driftward.grindstone.GrindstoneHandler;
+import ink.astrius.driftward.reg.CrystallarieumAmberCompat;
+import ink.astrius.driftward.reg.DriftwardReg;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
@@ -14,20 +16,17 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.fluids.FluidInteractionRegistry;
-import net.neoforged.neoforge.registries.RegisterEvent;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Supplier;
+import java.util.function.Consumer;
 
 @Mod(Driftward.MOD_ID)
 public class Driftward {
     public static final String MOD_ID = "driftward";
-    public static final Supplier<ItemUsedOnLocationTrigger>
-        ROTATED_WITH_WRENCH = DriftwardReg.CRITERIA_TRIGGERS.register(
-        "rotated_with_wrench", ItemUsedOnLocationTrigger::new
-    );
 
     public static final CrystallarieumAmberCompat crystallarieumAmberCompat = ModList.get().isLoaded("spectrum")
         ? new CrystallarieumAmberCompat()
@@ -42,9 +41,8 @@ public class Driftward {
         modEventBus.addListener(Driftward::onSetup);
         modEventBus.addListener(Driftward::onConfigLoad);
         modEventBus.addListener(Driftward::onConfigReload);
-        DriftwardReg.CRITERIA_TRIGGERS.register(modEventBus);
-        DriftwardReg.BLOCKS.register(modEventBus);
-        DriftwardReg.ITEMS.register(modEventBus);
+        DriftwardReg.register(modEventBus);
+        NeoForge.EVENT_BUS.addListener(GrindstoneHandler::grindstoneEventHandler);
         if (crystallarieumAmberCompat != null) {
             crystallarieumAmberCompat.register(modEventBus);
         }

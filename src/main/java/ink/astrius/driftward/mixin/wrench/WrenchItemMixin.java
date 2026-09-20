@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import static ink.astrius.driftward.Driftward.ROTATED_WITH_WRENCH;
+import static ink.astrius.driftward.reg.DriftwardReg.ROTATED_WITH_WRENCH;
 
 @Restriction(
     require = {

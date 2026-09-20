@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import static ink.astrius.driftward.DriftwardTags.END_BASE;
+import static ink.astrius.driftward.reg.DriftwardTags.END_BASE;
 
 @Restriction(require = @Condition("betterendisland"))
 @Mixin(targets = "com.yungnickyoung.minecraft.betterendisland.world.DragonRespawnStage$3")
