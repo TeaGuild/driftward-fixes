@@ -22,9 +22,7 @@ public class DisenchantingEmiRecipe extends BasicEmiRecipe {
 
     public static void register(EmiRegistry registry) {
         final var manager = registry.getRecipeManager();
-        System.out.println("MEOW");
         for (final var recipe : manager.getAllRecipesFor(DriftwardReg.DISENCHANTING_TYPE.get())) {
-            System.out.println("MEOW " + recipe.id().toString());
             registry.addRecipe(new DisenchantingEmiRecipe(recipe));
         }
     }
