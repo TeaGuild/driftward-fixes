@@ -8,7 +8,6 @@ import ink.astrius.driftward.reg.CrystallarieumAmberCompat;
 import ink.astrius.driftward.reg.DriftwardReg;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
@@ -17,12 +16,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.NeoForgeMod;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
-import net.neoforged.neoforge.fluids.FluidInteractionRegistry;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Consumer;
 
 @Mod(Driftward.MOD_ID)
 public class Driftward {
@@ -49,15 +43,7 @@ public class Driftward {
     }
 
     public static void onSetup(final FMLCommonSetupEvent event) {
-        FluidInteractionRegistry.addInteraction(
-            NeoForgeMod.LAVA_TYPE.value(),
-            new FluidInteractionRegistry.InteractionInformation(
-                NeoForgeMod.WATER_TYPE.value(),
-                (fluidState) -> fluidState.isSource()
-                    ? Blocks.OBSIDIAN.defaultBlockState()
-                    : Blocks.COBBLED_DEEPSLATE.defaultBlockState()
-            )
-        );
+        Cobblegen.register();
         if (ModList.get().isLoaded("ccterminals")) {
             TERMINAL_NORMAL = (TerminalBlock) BuiltInRegistries.BLOCK.get(
                 ResourceLocation.fromNamespaceAndPath("ccterminals", "terminal_normal")
