@@ -49,8 +49,6 @@
     "rope.RopeStrandHolderBehaviorMixin",
     "rope.SimPonderScenesMixin",
     "rope.SimPonderTagsMixin",
-    "scorchful.EntityDesertVisionAttachmentSyncHandlerMixin",
-    "scorchful.EntityMixin",
     "scorchful.ReplaceThirstPluginMixin",
     "tags.LMFTCommonAccessor",
     "tags.TagLoaderMixin",
