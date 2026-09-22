@@ -20,4 +20,8 @@ public class DriftwardTags {
         Registries.BLOCK,
         ResourceLocation.fromNamespaceAndPath(Driftward.MOD_ID, "remove_from_crashed_ship")
     );
+    public static final TagKey<Item> DEPLOYER_BLACKLIST = TagKey.create(
+        Registries.ITEM,
+        ResourceLocation.fromNamespaceAndPath(Driftward.MOD_ID, "deployer_blacklist")
+    );
 }
