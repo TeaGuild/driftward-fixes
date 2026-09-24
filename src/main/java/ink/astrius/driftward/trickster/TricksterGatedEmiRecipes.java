@@ -18,7 +18,7 @@ import java.util.Optional;
 
 public class TricksterGatedEmiRecipes {
     public static void register(EmiRegistry registry) {
-        if (!ModList.get().isLoaded("trickster")) {
+        if (!ModList.get().isLoaded("trickster") || !ModList.get().isLoaded("spectrum")) {
             return;
         }
         final var tormentCoreShell = BuiltInRegistries.ITEM.get(ResourceLocation.parse(
