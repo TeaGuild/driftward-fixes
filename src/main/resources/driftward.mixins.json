@@ -19,6 +19,7 @@
     "SpoutFillPurityMixin",
     "SweetBerryArmorMixin",
     "TickingBackportMixin",
+    "TreeFeatureMixin",
     "aeronautics.BalloonAccessor",
     "aeronautics.BalloonTemperatureMixin",
     "betterend.CrashedShipFeatureMixin",
