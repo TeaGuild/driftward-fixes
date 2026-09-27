@@ -19,6 +19,7 @@
     "SweetBerryArmorMixin",
     "TickingBackportMixin",
     "TreeFeatureMixin",
+    "VeilFramebufferStackMixin",
     "aeronautics.BalloonAccessor",
     "aeronautics.BalloonTemperatureMixin",
     "betterend.CrashedShipFeatureMixin",
