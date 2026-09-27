@@ -6,6 +6,7 @@
   "plugin": "ink.astrius.driftward.DriftwardMixinPlugin",
   "mixins": [
     "AllowCopyBlockEntityDataMixin",
+    "BiomeDecorationMixin",
     "CactusGlassPaneMixin",
     "CampfireLitByDefaultMixin",
     "CatSitOnComputerMixin",
