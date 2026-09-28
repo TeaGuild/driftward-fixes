@@ -15,6 +15,7 @@
     "EmiLootLootJSCompat",
     "EnableBundlesMixin",
     "EndermanOverhaulEndVeilMixin",
+    "GrowTinyCactusMixin",
     "LivingEntityAccessor",
     "LivingEntityMixin",
     "SweetBerryArmorMixin",
