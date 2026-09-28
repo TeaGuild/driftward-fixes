@@ -85,6 +85,7 @@ dependencies {
     implementation("maven.modrinth:critters-and-companions:kGomvo87")  // 2.6.2
     implementation("maven.modrinth:supplementaries:1.21.1-3.9.3")
     implementation("maven.modrinth:farmers-delight:1.21.1-1.3.2")
+    implementation("maven.modrinth:just-enough-effect-descriptions-jeed:1.21-2.3.4")
     implementation("com.simibubi.create:create-1.21.1:6.0.10-280:slim") { isTransitive = false }
     implementation("com.tterrag.registrate:Registrate:MC1.21-1.3.0+67")
     implementation("dev.eriksonn.aeronautics:aeronautics-neoforge-1.21.1:1.3.0")

@@ -63,7 +63,9 @@
     "client.BeeMovieMixin",
     "client.ClientRopeItemHandlerMixin",
     "client.EndSeaRendererMixin",
-    "client.LavenderStructureOverlayRendererMixin"
+    "client.LavenderStructureOverlayRendererMixin",
+    "client.jeed.EffectInfoMixin",
+    "client.jeed.EffectRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
