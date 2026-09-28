@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 public class Driftward {
     public static final String MOD_ID = "driftward";
 
-    public static final CrystallarieumAmberCompat crystallarieumAmberCompat = ModList.get().isLoaded("spectrum")
+    public static final CrystallarieumAmberCompat crystallarieumAmberCompat = ModList.get().isLoaded("spectrum") && ModList.get().isLoaded("betterend")
         ? new CrystallarieumAmberCompat()
         : null;
 
