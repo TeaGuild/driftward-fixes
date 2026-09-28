@@ -1,5 +1,5 @@
 plugins {
-    id("net.neoforged.moddev") version "2.0.78"
+    id("dev.architectury.loom") version "1.17-SNAPSHOT"
 }
 
 version = "1.41"
@@ -21,6 +21,8 @@ fun RepositoryHandler.repository(url: String, vararg groups: String) {
 
 repositories {
     mavenCentral()
+    maven("https://maven.neoforged.net/releases")
+    repository("https://maven.parchmentmc.org", "org.parchmentmc.data")
     repository(
         "https://maven.createmod.net",
         "com.simibubi.create", "net.createmod.ponder", "dev.engine-room.flywheel"
@@ -57,30 +59,14 @@ repositories {
     repository("https://maven.caffeinemc.net/releases", "net.caffeinemc")
 }
 
-neoForge {
-    version = "21.1.247"
-    mods {
-        create("driftward") { sourceSet(sourceSets.main.get()) }
-    }
-    parchment {
-        minecraftVersion = "1.21.1"
-        mappingsVersion = "2024.11.17"
-    }
-
-    runs {
-        create("client") {
-            client()
-            gameDirectory = project.file("run/client")
-        }
-
-        create("server") {
-            server()
-            gameDirectory = project.file("run/server")
-        }
-    }
-}
-
 dependencies {
+    minecraft("com.mojang:minecraft:1.21.1")
+    neoForge("net.neoforged:neoforge:21.1.247")
+    mappings(loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-1.21.1:2024.11.17@zip")
+    })
+
     implementation("net.caffeinemc:sodium-neoforge-api:0.8.13+mc1.21.1")
     implementation("maven.modrinth:critters-and-companions:kGomvo87")  // 2.6.2
     implementation("maven.modrinth:supplementaries:1.21.1-3.9.3")
@@ -116,9 +102,9 @@ dependencies {
     implementation("dev.architectury:architectury-neoforge:13.0.8")
     implementation("maven.modrinth:hybrid-aquatic:1.6.9-neoforge")
     implementation("maven.modrinth:enderman-overhaul:2.0.3")
-    jarJar(implementation("com.github.Fallen-Breath.conditional-mixin:conditional-mixin-neoforge:0.6.4")!!)
+    include(implementation("com.github.Fallen-Breath.conditional-mixin:conditional-mixin-neoforge:0.6.4")!!)
     compileOnly(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-common:0.3.7-beta.3")!!)
-    jarJar(implementation("com.github.bawnorton.mixinsquared:mixinsquared-neoforge:0.3.7-beta.3")!!)
+    include(implementation("com.github.bawnorton.mixinsquared:mixinsquared-neoforge:0.3.7-beta.3")!!)
     // a stub file with most of the code stripped. needed to compile LavenderStructureOverlayRendererMixin
     // as it uses a private class from lavender and moddevgradle only access transforms minecraft itself
     // at compile time
