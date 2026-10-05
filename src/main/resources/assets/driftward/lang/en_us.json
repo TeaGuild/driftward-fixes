@@ -1,4 +1,7 @@
 {
   "driftward.settings.end_sea_layers": "End Sea layers",
-  "driftward.settings.end_sea_layers.desc": "The number of End Sea layers to render. 0 disables End Sea rendering"
+  "driftward.settings.end_sea_layers.desc": "The number of End Sea layers to render. 0 disables End Sea rendering",
+  "driftward.settings.modonomicon_scale": "Spectrum book scale",
+  "driftward.settings.modonomicon_scale.desc": "Set scale for Spectrum book separately from the global setting to fix text readability",
+  "driftward.settings.modonomicon_scale.default": "Use global scale"
 }

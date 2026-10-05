@@ -68,7 +68,11 @@
     "client.EndSeaRendererMixin",
     "client.LavenderStructureOverlayRendererMixin",
     "client.jeed.EffectInfoMixin",
-    "client.jeed.EffectRendererMixin"
+    "client.jeed.EffectRendererMixin",
+    "modonomicon.SimpleRenderMixin",
+    "modonomicon.BookCategoryIndexScreenMixin",
+    "modonomicon.SimpleClickMixin",
+    "modonomicon.BookPaginatedScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

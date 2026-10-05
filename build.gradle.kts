@@ -58,6 +58,7 @@ repositories {
     repository("https://maven.shedaniel.me", "me.shedaniel.cloth")
     repository("https://maven.caffeinemc.net/releases", "net.caffeinemc")
     repository("https://maven.latvian.dev/releases", "dev.latvian.mods", "dev.latvian.apps")
+    repository("https://dl.cloudsmith.io/public/klikli-dev/mods/maven", "com.klikli_dev")
 }
 
 neoForge {
@@ -120,6 +121,9 @@ dependencies {
     implementation("dev.architectury:architectury-neoforge:13.0.8")
     implementation("maven.modrinth:hybrid-aquatic:1.6.9-neoforge")
     implementation("maven.modrinth:enderman-overhaul:2.0.3")
+    implementation("com.klikli_dev:modonomicon-1.21.1-neoforge:1.120.7") {
+        isTransitive = false
+    }
     jarJar(implementation("com.github.Fallen-Breath.conditional-mixin:conditional-mixin-neoforge:0.6.4")!!)
     compileOnly(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-common:0.3.7-beta.3")!!)
     jarJar(implementation("com.github.bawnorton.mixinsquared:mixinsquared-neoforge:0.3.7-beta.3")!!)
