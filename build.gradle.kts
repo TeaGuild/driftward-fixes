@@ -42,7 +42,9 @@ repositories {
     repository("https://api.modrinth.com/maven", "maven.modrinth")
     repository(
         "https://jitpack.io",
-        "com.github.TheDeathlyCow", "com.github.Fallen-Breath.conditional-mixin",
+        "com.github.TheDeathlyCow",
+        "com.github.Fallen-Breath.conditional-mixin",
+        "com.github.rtyley",
     )
     repository(
         "https://maven.sinytra.org",
@@ -55,6 +57,7 @@ repositories {
     repository("https://maven.architectury.dev", "dev.architectury")
     repository("https://maven.shedaniel.me", "me.shedaniel.cloth")
     repository("https://maven.caffeinemc.net/releases", "net.caffeinemc")
+    repository("https://maven.latvian.dev/releases", "dev.latvian.mods", "dev.latvian.apps")
 }
 
 neoForge {
@@ -81,6 +84,7 @@ neoForge {
 }
 
 dependencies {
+    implementation("dev.latvian.mods:kubejs-neoforge:2101.7.2-build.377")
     implementation("net.caffeinemc:sodium-neoforge-api:0.8.13+mc1.21.1")
     implementation("maven.modrinth:critters-and-companions:kGomvo87")  // 2.6.2
     implementation("maven.modrinth:supplementaries:1.21.1-3.9.3")
