@@ -128,8 +128,9 @@ dependencies {
     // at compile time
     // https://github.com/vanutp-forks/lavender/tree/1.21-stripped
     compileOnly(files("libs/lavender-0.1.15-stub+1.21.jar"))
-    compileOnly("dev.emi:emi-neoforge:1.1.24+1.21.1:api")
-    runtimeOnly("dev.emi:emi-neoforge:1.1.24+1.21.1")
+    // linking to emi internals, as there seems to be no way to add missing recipes for hardcoded stuff
+    // like anvil repair recipes, and we also mixin into them to change recipe order
+    implementation("dev.emi:emi-neoforge:1.1.24+1.21.1")
     runtimeOnly("maven.modrinth:moonlight:CitoQHqE")
     runtimeOnly("maven.modrinth:yacl:3.8.2+1.21.1-neoforge")
     runtimeOnly("maven.modrinth:geckolib:tPkJmim6")  // 4.9.2

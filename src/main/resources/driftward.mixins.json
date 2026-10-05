@@ -13,6 +13,7 @@
     "ContraptionColliderMixin",
     "DeployerHandlerMixin",
     "EmiLootLootJSCompat",
+    "EmiRecipeOrderMixin",
     "EnableBundlesMixin",
     "EndermanOverhaulEndVeilMixin",
     "GrowTinyCactusMixin",
