@@ -21,6 +21,7 @@
     "EnableBundlesMixin",
     "EndermanOverhaulEndVeilMixin",
     "ExtendItemLifetimeMixin",
+    "FixKubeJSFoodBuilderMixin",
     "GrowTinyCactusMixin",
     "JeedSpectrumIntegrationMixin",
     "LivingEntityAccessor",
