@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(CampfireBlock.class)
-public class CampfireLitByDefaultMixin {
+public class CampfireUnlitByDefaultMixin {
     @Redirect(
         method = "getStateForPlacement",
         at = @At(
