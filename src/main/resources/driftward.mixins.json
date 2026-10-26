@@ -27,6 +27,7 @@
     "LivingEntityAccessor",
     "LivingEntityMixin",
     "MelonJuiceMixin",
+    "PigmentPotionNameMixin",
     "RawNbtMixin",
     "RightClickHarvestMixin",
     "SweetBerryArmorMixin",
