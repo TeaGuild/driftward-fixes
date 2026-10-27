@@ -24,7 +24,7 @@ import java.util.function.IntBinaryOperator;
 public final class ClimateWeather {
     public record State(
         double pressure, double windX, double windZ, double cloud, double precipitation, double thunder, double fog,
-        Raw raw
+        double cloudBase, double cloudTop, Raw raw
     ) {
         public double windSpeed() {
             return Math.sqrt(windX * windX + windZ * windZ);
@@ -37,12 +37,14 @@ public final class ClimateWeather {
         }
     }
 
-    public static final State CALM = new State(0, 0, 0, 0, 0, 0, 0, new Raw(0, 0, 0, 0, 0, 0));
+    public static final State CALM = new State(0, 0, 0, 0, 0, 0, 0, 1e9, 1e9, new Raw(0, 0, 0, 0, 0, 0, 1e9));
 
     private static final double[] SCALES = {3200, 1300, 550};
     private static final double[] WEIGHTS = {1, 0.45, 0.2};
     private static final double GRADIENT_STEP = 160;
     private static final double TERRAIN_STEP = 32;
+    // The Overworld's; weather only runs there
+    private static final int SEA_LEVEL = 63;
 
     private static final Map<Long, ImprovedNoise[]> NOISE = new ConcurrentHashMap<>();
 
@@ -138,16 +140,41 @@ public final class ClimateWeather {
         double fog = smoothstep(humidity, 0.75, 0.98) * (1 - smoothstep(speed, 2, 6)) * dawn
             + 0.6 * climate.valley() * smoothstep(humidity, 0.6, 0.9);
 
-        return finish(new Raw(p * 18, windX, windZ, cloud, storm, fog), precipitates);
+        // Cloud base at the lifting condensation level: about 125 m per °C between air and dew point,
+        // with dew point ≈ T - (100 - RH%)/5, so ≈ 25 m × (100 - RH%); one block is about 7.7 m on the
+        // model's vertical scale. Lows and convection lift moist air, so the base comes down there.
+        double relative = Mth.clamp(0.3 + 0.65 * humidity + 0.25 * Math.max(0, -p) + 0.2 * convection, 0.05, 1);
+        // The base is level across an air mass (that's why peaks reach into cloud): measured from sea
+        // level plus part of the regional terrain height, not from each column's own ground
+        double regional = y;
+        if (terrain != null) {
+            double sum = 0;
+            int n = 0;
+            for (int[] o : new int[][] {{128, 0}, {-128, 0}, {0, 128}, {0, -128}}) {
+                int h = terrain.applyAsInt((int) x + o[0], (int) z + o[1]);
+                if (h != Integer.MIN_VALUE) {
+                    sum += h;
+                    n++;
+                }
+            }
+            if (n > 0) {
+                regional = (sum + y) / (n + 1);
+            }
+        }
+        double reference = SEA_LEVEL + 0.6 * Math.max(0, regional - SEA_LEVEL);
+        double cloudBase = reference + Mth.clamp(3.25 * (100 - relative * 100), 12, 260);
+
+        return finish(new Raw(p * 18, windX, windZ, cloud, storm, fog, cloudBase), precipitates);
     }
 
     // The smooth part of the weather, before the biome decides whether anything falls. It varies
     // over kilometres, so maps compute it on a coarse grid and interpolate.
-    public record Raw(double pressure, double windX, double windZ, double cloud, double storm, double fog) {
+    public record Raw(double pressure, double windX, double windZ, double cloud, double storm, double fog, double cloudBase) {
         public static Raw lerp(double t, Raw a, Raw b) {
             return new Raw(
                 Mth.lerp(t, a.pressure, b.pressure), Mth.lerp(t, a.windX, b.windX), Mth.lerp(t, a.windZ, b.windZ),
-                Mth.lerp(t, a.cloud, b.cloud), Mth.lerp(t, a.storm, b.storm), Mth.lerp(t, a.fog, b.fog)
+                Mth.lerp(t, a.cloud, b.cloud), Mth.lerp(t, a.storm, b.storm), Mth.lerp(t, a.fog, b.fog),
+                Mth.lerp(t, a.cloudBase, b.cloudBase)
             );
         }
     }
@@ -158,7 +185,10 @@ public final class ClimateWeather {
         double precipitation = precipitates ? smoothstep(cloud, ClimateConstants.get().weatherRainCloud(), 1) : 0;
         double thunder = precipitation > 0 ? raw.storm() * Math.min(1, precipitation * 2) : 0;
         double fog = Mth.clamp(raw.fog() * (1 - 0.6 * precipitation), 0, 1);
-        return new State(raw.pressure(), raw.windX(), raw.windZ(), cloud, precipitation, thunder, fog, raw);
+        // Rain lowers the base; thicker cloud and storms reach higher
+        double base = raw.cloudBase() - 25 * precipitation;
+        double top = base + 4 + 60 * cloud * cloud + 120 * thunder;
+        return new State(raw.pressure(), raw.windX(), raw.windZ(), cloud, precipitation, thunder, fog, base, top, raw);
     }
 
     private static double smoothstep(double x, double lo, double hi) {

@@ -65,10 +65,12 @@ public final class ClimateLocalWeather {
         return weather;
     }
 
-    // Nothing falls at this column (only meaningful when `active`)
+    // Nothing falls at this position (only meaningful when `active`): no precipitation in the
+    // column, or the position is above the cloud base
     public static boolean dry(Level level, BlockPos pos) {
         if (level instanceof ServerLevel serverLevel) {
-            return at(serverLevel, pos).precipitation() < WET;
+            var w = at(serverLevel, pos);
+            return w.precipitation() < WET || pos.getY() > w.cloudBase();
         }
         double precipitation = ClimateSync.Grid.precipitation(pos);
         return !Double.isNaN(precipitation) && precipitation < WET;

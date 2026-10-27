@@ -163,6 +163,8 @@ public final class ClimateCommand {
         var w = ClimateModel.weather(level, pos, biome, b.noise(), ClimateModel.live(level, pos, biome, false));
         line(out, "weather", "pressure %+.0f hPa, wind %.0f m/s from %.0f°, cloud %.0f%%, precipitation %.0f%%, thunder %.0f%%, fog %.0f%%",
             w.pressure(), w.windSpeed(), w.windFrom(), w.cloud() * 100, w.precipitation() * 100, w.thunder() * 100, w.fog() * 100);
+        line(out, "clouds", "base y %.0f, top y %.0f%s", w.cloudBase(), w.cloudTop(),
+            pos.getY() > w.cloudBase() ? " (above the base: no rain here)" : "");
         line(out, "rain", "vanilla rain %.2f, thunder %.2f%s → %s",
             level.getRainLevel(1), level.getThunderLevel(1),
             ClimateConstants.get().weatherDrivesRain() ? " (model uses the weather layer)" : "", signed(b.weather()));

@@ -24,7 +24,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public record ClimateSync(
     int originX, int originZ, int spacing, int size, float lapse, float[] celsius, short[] surface,
     byte[] precipitation, byte[] thunder, byte[] cloud, byte[] fog,
-    float hereRain, float hereThunder, float hereCloud, float hereFog
+    float hereRain, float hereThunder, float hereCloud, float hereFog, float hereCloudBase
 ) implements CustomPacketPayload {
     public static final Type<ClimateSync> TYPE =
         new Type<>(ResourceLocation.fromNamespaceAndPath(Driftward.MOD_ID, "climate_grid"));
@@ -48,6 +48,7 @@ public record ClimateSync(
             buf.writeFloat(grid.hereThunder);
             buf.writeFloat(grid.hereCloud);
             buf.writeFloat(grid.hereFog);
+            buf.writeFloat(grid.hereCloudBase);
         },
         buf -> {
             int originX = buf.readVarInt();
@@ -71,7 +72,8 @@ public record ClimateSync(
                 fog[i] = buf.readByte();
             }
             return new ClimateSync(originX, originZ, spacing, size, lapse, celsius, surface,
-                precipitation, thunder, cloud, fog, buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat());
+                precipitation, thunder, cloud, fog, buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(),
+                buf.readFloat());
         }
     );
 
@@ -87,7 +89,7 @@ public record ClimateSync(
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
         // Optional: clients without the mod just keep Serene Seasons' own behaviour
-        event.registrar("2").optional().playToClient(TYPE, STREAM_CODEC, ClimateSync::handle);
+        event.registrar("3").optional().playToClient(TYPE, STREAM_CODEC, ClimateSync::handle);
     }
 
     private static void handle(ClimateSync grid, IPayloadContext ctx) {
@@ -151,14 +153,15 @@ public record ClimateSync(
         var here = ClimateLocalWeather.at(level, center);
         return new ClimateSync(originX, originZ, spacing, size, (float) c.lapsePerBlock(), celsius, surface,
             precipitation, thunder, cloud, fog,
-            (float) here.precipitation(), (float) here.thunder(), (float) here.cloud(), (float) here.fog());
+            (float) here.precipitation(), (float) here.thunder(), (float) here.cloud(), (float) here.fog(),
+            (float) here.cloudBase());
     }
 
     // The last grid the client received
     public static final class Grid {
         static volatile ClimateSync current;
         // Weather at the player, eased from the previous update over a couple of seconds
-        private static volatile float[] from = new float[4];
+        private static volatile float[] from = new float[5];
         private static volatile long receivedAt;
 
         private Grid() {}
@@ -168,12 +171,12 @@ public record ClimateSync(
         }
 
         static void receive(ClimateSync grid) {
-            from = new float[] {here(0), here(1), here(2), here(3)};
+            from = new float[] {here(0), here(1), here(2), here(3), present() ? here(4) : grid.hereCloudBase};
             receivedAt = System.currentTimeMillis();
             current = grid;
         }
 
-        // 0 rain, 1 thunder, 2 cloud, 3 fog at the player
+        // 0 rain, 1 thunder, 2 cloud, 3 fog, 4 cloud base (y) at the player
         public static float here(int which) {
             var grid = current;
             if (grid == null) {
@@ -183,7 +186,8 @@ public record ClimateSync(
                 case 0 -> grid.hereRain;
                 case 1 -> grid.hereThunder;
                 case 2 -> grid.hereCloud;
-                default -> grid.hereFog;
+                case 3 -> grid.hereFog;
+                default -> grid.hereCloudBase;
             };
             float t = Mth.clamp((System.currentTimeMillis() - receivedAt) / 2000f, 0, 1);
             return Mth.lerp(t, from[which], target);
