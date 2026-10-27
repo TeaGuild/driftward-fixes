@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.levelgen.Heightmap;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
@@ -38,9 +37,10 @@ public class LevelRendererWeatherMixin {
         var minecraft = Minecraft.getInstance();
         var level = minecraft.level;
         if (level != null && ClimateLocalWeather.active(level)) {
-            // Columns whose ground reaches above the cloud base stay dry; the rest get rain or snow
-            int ground = level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ());
-            if (ClimateLocalWeather.dry(level, pos) || ground > ClimateSync.Grid.here(4)) {
+            // Vanilla asks with the bottom of the stretch it's about to draw (the ground, or ten blocks
+            // below the camera); nothing falls there if that's above the cloud base. Rain splashes and
+            // sounds ask with the ground.
+            if (ClimateLocalWeather.dry(level, pos) || pos.getY() > ClimateClouds.cloudBase()) {
                 return Biome.Precipitation.NONE;
             }
         }

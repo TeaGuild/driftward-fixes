@@ -144,25 +144,9 @@ public final class ClimateWeather {
         // with dew point ≈ T - (100 - RH%)/5, so ≈ 25 m × (100 - RH%); one block is about 7.7 m on the
         // model's vertical scale. Lows and convection lift moist air, so the base comes down there.
         double relative = Mth.clamp(0.3 + 0.65 * humidity + 0.25 * Math.max(0, -p) + 0.2 * convection, 0.05, 1);
-        // The base is level across an air mass (that's why peaks reach into cloud): measured from sea
-        // level plus part of the regional terrain height, not from each column's own ground
-        double regional = y;
-        if (terrain != null) {
-            double sum = 0;
-            int n = 0;
-            for (int[] o : new int[][] {{128, 0}, {-128, 0}, {0, 128}, {0, -128}}) {
-                int h = terrain.applyAsInt((int) x + o[0], (int) z + o[1]);
-                if (h != Integer.MIN_VALUE) {
-                    sum += h;
-                    n++;
-                }
-            }
-            if (n > 0) {
-                regional = (sum + y) / (n + 1);
-            }
-        }
-        double reference = SEA_LEVEL + 0.6 * Math.max(0, regional - SEA_LEVEL);
-        double cloudBase = reference + Mth.clamp(3.25 * (100 - relative * 100), 12, 260);
+        // The base is a property of the air mass, level across it (that's why peaks reach into
+        // cloud): measured from sea level, not from the terrain under it
+        double cloudBase = SEA_LEVEL + Mth.clamp(3.25 * (100 - relative * 100), 12, 260);
 
         return finish(new Raw(p * 18, windX, windZ, cloud, storm, fog, cloudBase), precipitates);
     }

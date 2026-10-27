@@ -3,6 +3,7 @@ package ink.astrius.driftward.client;
 import com.mojang.blaze3d.platform.NativeImage;
 import ink.astrius.driftward.climate.ClimateCloudField;
 import ink.astrius.driftward.climate.ClimateLocalWeather;
+import ink.astrius.driftward.climate.ClimateSync;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
@@ -39,7 +40,25 @@ public final class ClimateClouds {
         return installed;
     }
 
+    // The cloud base as drawn: eased towards the synced value with a time constant of about half a
+    // minute, so the deck rises and sinks with the weather instead of bobbing as you move
+    private static float cloudBase = Float.NaN;
+
+    public static float cloudBase() {
+        return Float.isNaN(cloudBase) ? ClimateSync.Grid.here(4) : cloudBase;
+    }
+
+    private static void easeCloudBase() {
+        if (!ClimateSync.Grid.present()) {
+            cloudBase = Float.NaN;
+            return;
+        }
+        float target = ClimateSync.Grid.here(4);
+        cloudBase = Float.isNaN(cloudBase) ? target : cloudBase + (target - cloudBase) * (1 - (float) Math.exp(-1 / 600.0));
+    }
+
     private static void tick() {
+        easeCloudBase();
         var minecraft = Minecraft.getInstance();
         var level = minecraft.level;
         var field = ClimateCloudField.Received.current();
