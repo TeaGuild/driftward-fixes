@@ -10,7 +10,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Restriction(require = @Condition("betterend"))
+@Restriction(
+    require = {
+        @Condition("betterend"),
+        @Condition("crittersandcompanions")
+    }
+)
 @Mixin(SilkMothHiveBlock.class)
 public class SilkMothHiveBlockMixin {
     @Redirect(

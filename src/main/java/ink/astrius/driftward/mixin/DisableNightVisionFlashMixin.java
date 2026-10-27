@@ -12,6 +12,9 @@ public class DisableNightVisionFlashMixin {
     @Overwrite
     public static float getNightVisionScale(LivingEntity entity, float f) {
         var effect = entity.getEffect(MobEffects.NIGHT_VISION);
+        if (effect.isInfiniteDuration()) {
+            return 1.0F;
+        }
         return Math.min(effect.getDuration() / 200.0F, 1.0F);
     }
 }
