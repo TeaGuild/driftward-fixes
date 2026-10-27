@@ -151,7 +151,7 @@ dependencies {
     runtimeOnly("maven.modrinth:fzzy-config:0.7.6+1.21+neoforge")
     runtimeOnly("maven.modrinth:wunderlib-neoforge:21.0.10")
     runtimeOnly("maven.modrinth:curios:9.5.1+1.21.1")
-    runtimeOnly("maven.modrinth:modonomicon:jH6bsw4F")  // 1.21.1-1.120.4
+    runtimeOnly("maven.modrinth:modonomicon:fbS7CiY6")  // 1.21.1-1.120.7
     runtimeOnly("maven.modrinth:revelationary:1.5.1+1.21.1")
     runtimeOnly("maven.modrinth:yungs-api:1.21.1-NeoForge-5.1.8")
     runtimeOnly("maven.modrinth:kotlin-for-forge:5.12.0")

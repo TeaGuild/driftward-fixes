@@ -10,16 +10,23 @@ import ink.astrius.driftward.config.ClientConfig;
 import ink.astrius.driftward.modonomicon.IScaleFactor;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
+import net.minecraft.client.InputType;
 import net.minecraft.client.gui.screens.Screen;
+import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Restriction(require = @Condition("modonomicon"))
 @Mixin(BookPaginatedScreen.class)
-public class BookPaginatedScreenMixin extends Screen implements IScaleFactor {
+public abstract class BookPaginatedScreenMixin extends Screen implements IScaleFactor {
+    @Shadow
+    protected abstract void flipPage(boolean left, boolean playSound);
+
     @Unique
     private float driftward$scaleFactor;
 
@@ -67,6 +74,33 @@ public class BookPaginatedScreenMixin extends Screen implements IScaleFactor {
         } else {
             // Called by child class that overrides mouseClicked, coords are already scaled by other mixin
             return original.call(pMouseX, pMouseY, pButton);
+        }
+    }
+
+    @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
+    public void handleArrows(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
+        if (keyCode == GLFW.GLFW_KEY_LEFT) {
+            this.flipPage(true, true);
+            cir.setReturnValue(true);
+        } else if (keyCode == GLFW.GLFW_KEY_RIGHT) {
+            this.flipPage(false, true);
+            cir.setReturnValue(true);
+        } else if (keyCode == GLFW.GLFW_KEY_UP || keyCode == GLFW.GLFW_KEY_DOWN) {
+            cir.setReturnValue(true);
+        } else {
+            return;
+        }
+        // Unfocus everything
+        this.minecraft.setLastInputType(InputType.NONE);
+    }
+
+    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_LEFT || keyCode == GLFW.GLFW_KEY_RIGHT || keyCode == GLFW.GLFW_KEY_UP || keyCode == GLFW.GLFW_KEY_DOWN) {
+            // Unfocus everything
+            this.minecraft.setLastInputType(InputType.NONE);
+            return true;
+        } else {
+            return false;
         }
     }
 }
