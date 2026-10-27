@@ -87,6 +87,7 @@
     "client.BeeMovieMixin",
     "client.ClientRopeItemHandlerMixin",
     "client.EndSeaRendererMixin",
+    "client.sodium.ScreenPromptWidgetsMixin",
     "client.LavenderStructureOverlayRendererMixin",
     "client.jeed.EffectInfoMixin",
     "client.jeed.EffectRendererMixin",
