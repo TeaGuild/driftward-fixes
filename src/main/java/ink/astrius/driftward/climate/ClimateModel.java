@@ -89,8 +89,8 @@ public final class ClimateModel {
         );
     }
 
-    // Ground height for pooling: the loaded heightmap where the chunk is loaded, else the generator's
-    // estimate (never loads chunks). Only this terrain's valley depths are cached; maps pass their own.
+    // Ground height for pooling and the weather: the loaded heightmap, nothing where the chunk isn't
+    // loaded (never loads chunks). Only this terrain's valley depths are cached; maps pass their own.
     public static IntBinaryOperator terrain(Level level) {
         return new LiveTerrain(level);
     }
@@ -98,16 +98,12 @@ public final class ClimateModel {
     private record LiveTerrain(Level level) implements IntBinaryOperator {
         @Override
         public int applyAsInt(int x, int z) {
+            // Loaded chunks only: the generator's height is a full noise column (about a millisecond
+            // with Terralith), far too slow for anything that runs per tick
             if (level.hasChunk(SectionPos.blockToSectionCoord(x), SectionPos.blockToSectionCoord(z))) {
                 return level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
             }
-            if (!(level instanceof ServerLevel serverLevel)) {
-                return Integer.MIN_VALUE;
-            }
-            var source = serverLevel.getChunkSource();
-            return source.getGenerator().getBaseHeight(
-                x, z, Heightmap.Types.WORLD_SURFACE_WG, serverLevel, source.randomState()
-            );
+            return Integer.MIN_VALUE;
         }
     }
 
@@ -142,12 +138,43 @@ public final class ClimateModel {
     }
 
     // The weather at a position under the given conditions (their own weather is ignored)
+    // The weather is smooth over kilometres and asked for constantly (Thermoo, Serene Seasons' rain
+    // and snow checks, crops), so live queries share one result per 16×16 column for two seconds,
+    // computed at the surface
+    private static final int WEATHER_TICKS = 40;
+    private static final java.util.concurrent.ConcurrentHashMap<Long, ClimateWeather.State> WEATHER =
+        new java.util.concurrent.ConcurrentHashMap<>();
+    private static volatile long weatherBucket = Long.MIN_VALUE;
+
     public static ClimateWeather.State weather(Level level, BlockPos pos, Holder<Biome> biome, Noise noise, Conditions at) {
         if (!(level instanceof ServerLevel serverLevel) || !ClimateConstants.get().weatherEnabled()) {
             return ClimateWeather.CALM;
         }
+        if (!(at.terrain() instanceof LiveTerrain)) {
+            return computeWeather(serverLevel, pos, biome, noise, at);
+        }
+        long bucket = level.getGameTime() / WEATHER_TICKS;
+        if (bucket != weatherBucket) {
+            WEATHER.clear();
+            weatherBucket = bucket;
+        }
+        long key = ChunkPos.asLong(pos.getX() >> 4, pos.getZ() >> 4);
+        var cached = WEATHER.get(key);
+        if (cached != null) {
+            return cached;
+        }
+        var surface = new BlockPos(pos.getX(), at.surface(), pos.getZ());
+        var weather = computeWeather(serverLevel, surface, biome, noise, at);
+        if (WEATHER.size() > 1 << 14) {
+            WEATHER.clear();
+        }
+        WEATHER.put(key, weather);
+        return weather;
+    }
+
+    private static ClimateWeather.State computeWeather(ServerLevel level, BlockPos pos, Holder<Biome> biome, Noise noise, Conditions at) {
         var climate = breakdown(level, pos, biome, noise, at.withWeather(0, 0, 0));
-        return ClimateWeather.at(serverLevel.getSeed(), pos.getX(), pos.getZ(), pos.getY(), level.getGameTime(),
+        return ClimateWeather.at(level.getSeed(), pos.getX(), pos.getZ(), pos.getY(), level.getGameTime(),
             climate, biome.value().hasPrecipitation(), at.terrain());
     }
 
