@@ -1,5 +1,6 @@
 package ink.astrius.driftward.config;
 
+import ink.astrius.driftward.climate.ClimateConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public final class ServerConfig {
@@ -12,6 +13,8 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue BALLOON_MAX_MULTIPLIER;
 
     public static final ModConfigSpec.DoubleValue ELYTRA_EXHAUSTION_PER_TICK;
+
+    public static final ClimateConfig CLIMATE;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -51,6 +54,9 @@ public final class ServerConfig {
             .defineInRange("exhaustionPerTick", 0.02, 0.0, 1.0);
 
         b.pop();
+
+        CLIMATE = new ClimateConfig(b);
+
         SPEC = b.build();
     }
 

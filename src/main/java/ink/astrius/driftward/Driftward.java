@@ -1,6 +1,9 @@
 package ink.astrius.driftward;
 
 import com.sashafiesta.ccterminals.TerminalBlock;
+import ink.astrius.driftward.climate.BiomeClimate;
+import ink.astrius.driftward.climate.ClimateConstants;
+import ink.astrius.driftward.climate.ClimateEnvironmentProvider;
 import ink.astrius.driftward.config.ClientConfig;
 import ink.astrius.driftward.config.ServerConfig;
 import ink.astrius.driftward.grindstone.GrindstoneHandler;
@@ -19,6 +22,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
 import org.jetbrains.annotations.Nullable;
 
 @Mod(Driftward.MOD_ID)
@@ -40,6 +44,10 @@ public class Driftward {
         modBus.addListener(Driftward::onConfigLoad);
         modBus.addListener(Driftward::onConfigReload);
         DriftwardReg.register(modBus);
+        modBus.addListener((RegisterDataMapTypesEvent event) -> event.register(BiomeClimate.DATA_MAP));
+        if (ModLoaded.THERMOO) {
+            ClimateEnvironmentProvider.register(modBus);
+        }
         NeoForge.EVENT_BUS.addListener(GrindstoneHandler::grindstoneEventHandler);
         if (crystallarieumAmberCompat != null) {
             crystallarieumAmberCompat.register();
@@ -72,12 +80,16 @@ public class Driftward {
     public static void onConfigLoad(final ModConfigEvent.Loading event) {
         if (event.getConfig().getType() == ModConfig.Type.CLIENT) {
             ClientConfig.onConfigReload();
+        } else if (event.getConfig().getType() == ModConfig.Type.SERVER) {
+            ClimateConstants.reload();
         }
     }
 
     public static void onConfigReload(final ModConfigEvent.Reloading event) {
         if (event.getConfig().getType() == ModConfig.Type.CLIENT) {
             ClientConfig.onConfigReload();
+        } else if (event.getConfig().getType() == ModConfig.Type.SERVER) {
+            ClimateConstants.reload();
         }
     }
 }

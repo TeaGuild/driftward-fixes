@@ -14,4 +14,6 @@ public class ModLoaded {
     public static final boolean CREEPER_OVERHAUL = ModList.get().isLoaded("creeperoverhaul");
     public static final boolean EMI_LOOT = ModList.get().isLoaded("emi_loot");
     public static final boolean CHALK = ModList.get().isLoaded("chalk");
+    public static final boolean THERMOO = ModList.get().isLoaded("thermoo");
+    public static final boolean SERENE_SEASONS = ModList.get().isLoaded("sereneseasons");
 }

@@ -2,7 +2,7 @@ plugins {
     id("net.neoforged.moddev") version "2.0.148"
 }
 
-version = "1.54"
+version = "1.55"
 group = "ink.astrius"
 base { archivesName = "driftward-mod" }
 
@@ -129,6 +129,7 @@ dependencies {
     compileOnly("cc.tweaked:cc-tweaked-1.21.1-forge:1.120.2")
     compileOnly("maven.modrinth:cc-terminals:3VT1i1B2")  // 0.1.1
     compileOnly("com.github.TheDeathlyCow:thermoo:v4.8.1-neoforge")
+    compileOnly("maven.modrinth:serene-seasons:pHEgQQUE")  // 10.1.0.9, same as the pack
     compileOnly("dev.yumi.mc.core:yumi-mc-foundation:1.0.0-beta.1+1.21.1") {
         attributes {
             attribute(Attribute.of("net.minecraft.mappings", String::class.java), "mojmap")
