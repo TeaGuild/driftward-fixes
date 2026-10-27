@@ -8,6 +8,7 @@
     "AllowCopyBlockEntityDataMixin",
     "BiomeDecorationMixin",
     "CactusGlassPaneMixin",
+    "ElytraExhaustionMixin",
     "CampfireUnlitByDefaultMixin",
     "CatSitOnComputerMixin",
     "ContraptionColliderMixin",

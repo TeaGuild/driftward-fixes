@@ -11,6 +11,8 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue BALLOON_MIN_MULTIPLIER;
     public static final ModConfigSpec.DoubleValue BALLOON_MAX_MULTIPLIER;
 
+    public static final ModConfigSpec.DoubleValue ELYTRA_EXHAUSTION_PER_TICK;
+
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
 
@@ -38,6 +40,15 @@ public final class ServerConfig {
         BALLOON_MAX_MULTIPLIER = b
             .comment("Highest lift multiplier (very cold environments / high altitude).")
             .defineInRange("maxMultiplier", 1.5, 1.0, 10.0);
+
+        b.pop();
+
+        b.comment("Gliding with an elytra costs food, so that airships stay the efficient way to travel far.")
+            .push("elytra");
+
+        ELYTRA_EXHAUSTION_PER_TICK = b
+            .comment("Exhaustion added every tick while gliding. Sprinting costs about 0.028 per tick at full speed; 0 disables.")
+            .defineInRange("exhaustionPerTick", 0.02, 0.0, 1.0);
 
         b.pop();
         SPEC = b.build();
