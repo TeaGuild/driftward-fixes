@@ -4,7 +4,10 @@ import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 
@@ -16,6 +19,9 @@ public final class ClimatePrecipitation {
     private static final int CACHE_TICKS = 40;
     private static final Long2DoubleMap CACHE = new Long2DoubleOpenHashMap();
     private static long cacheBucket = Long.MIN_VALUE;
+
+    private static final TagKey<Biome> SEASONS_BLACKLIST =
+        TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("sereneseasons", "blacklisted_biomes"));
 
     private ClimatePrecipitation() {}
 
@@ -31,7 +37,8 @@ public final class ClimatePrecipitation {
         if (level.dimension() != Level.OVERWORLD || (!(level instanceof ServerLevel) && !ClimateSync.Grid.present())) {
             return Double.NaN;
         }
-        if (!applies(level)) {
+        // Biomes the pack keeps out of seasons (e.g. glaciers that shouldn't melt) stay vanilla
+        if (!applies(level) || biome.is(SEASONS_BLACKLIST)) {
             return Double.NaN;
         }
         double celsius = level instanceof ServerLevel serverLevel ? serverCelsius(serverLevel, biome, pos)
