@@ -22,7 +22,8 @@ import java.util.stream.IntStream;
 // (no chunks are loaded, so it works far beyond explored land). Safe to run off the server thread.
 public final class ClimateMap {
     public enum Layer {
-        TEMPERATURE, MEAN, AMPLITUDE, HUMIDITY, DRYNESS, SNOW, BIOME;
+        TEMPERATURE, MEAN, AMPLITUDE, HUMIDITY, DRYNESS, SNOW, BIOME,
+        PRESSURE, WIND, CLOUD, PRECIPITATION, FOG;
 
         public String id() {
             return name().toLowerCase(Locale.ROOT);
@@ -30,12 +31,15 @@ public final class ClimateMap {
     }
 
     // What the map shows: one moment of the year and day, with clear or current weather
-    public record Moment(String name, double season, long dayTime, double rain, double thunder) {}
+    // `gameTime` places the weather; the season and time of day can differ from it
+    public record Moment(String name, double season, long dayTime, long gameTime) {}
 
     public record Result(Path file, int width, int height, double min, double max, double average, double belowSnow) {}
 
     private static final int LEGEND = 14;
     private static final int HEIGHT_SPACING = 32;
+    private static final int MAX_HEIGHT_SAMPLES = 160;
+    private static final int WEATHER_SPACING = 96;
 
     private ClimateMap() {}
 
@@ -55,7 +59,9 @@ public final class ClimateMap {
         // Heights first: pooling reads the neighbourhood from this grid. A full noise column per pixel
         // is slow (Terralith), so heights come from a coarser grid, bilinear in between; the model
         // only needs them to a few blocks.
-        int hs = Math.max(1, Math.min(HEIGHT_SPACING / step, size - 1));
+        // A full noise column per sample is the expensive part of a map, so big maps space them wider
+        int hs = Math.max(1, Math.min(
+            Math.max(HEIGHT_SPACING / step, (size - 1 + MAX_HEIGHT_SAMPLES - 1) / MAX_HEIGHT_SAMPLES), size - 1));
         int coarse = (size - 1) / hs + 2;
         var coarseHeights = new int[coarse * coarse];
         IntStream.range(0, coarse).parallel().forEach(a -> {
@@ -81,10 +87,39 @@ public final class ClimateMap {
             return heights[i * size + j];
         };
 
+        // Weather varies over kilometres: compute its smooth part on a coarse grid, interpolate, and let
+        // each pixel's biome decide whether anything falls
+        int ws = Math.max(1, Math.min(WEATHER_SPACING / step, size - 1));
+        int wc = (size - 1) / ws + 2;
+        var coarseWeather = new ClimateWeather.Raw[wc * wc];
+        IntStream.range(0, wc).parallel().forEach(a -> {
+            var p = new BlockPos.MutableBlockPos();
+            for (int b = 0; b < wc; b++) {
+                int x = x0 + a * ws * step;
+                int z = z0 + b * ws * step;
+                int y = terrain.applyAsInt(x, z);
+                p.set(x, y, z);
+                int qx = QuartPos.fromBlock(x), qy = QuartPos.fromBlock(y), qz = QuartPos.fromBlock(z);
+                var biome = generator.getBiomeSource().getNoiseBiome(qx, qy, qz, sampler);
+                Climate.TargetPoint point = sampler.sample(qx, qy, qz);
+                var noise = new ClimateModel.Noise(
+                    Climate.unquantizeCoord(point.temperature()),
+                    Climate.unquantizeCoord(point.humidity()),
+                    Climate.unquantizeCoord(point.continentalness())
+                );
+                var at = new ClimateModel.Conditions(
+                    y, moment.season(), moment.season(), moment.dayTime(), 0, 0, 0, 0, false, terrain
+                );
+                var base = ClimateModel.breakdown(level, p, biome, noise, at);
+                coarseWeather[a * wc + b] = ClimateWeather.at(level.getSeed(), x, z, y, moment.gameTime(), base, true, terrain).raw();
+            }
+        });
+
         var values = new double[size * size];
         var celsius = new double[size * size];
         @SuppressWarnings("unchecked")
         Holder<Biome>[] biomes = new Holder[size * size];
+        var weather = new ClimateWeather.State[size * size];
         IntStream.range(0, size).parallel().forEach(i -> {
             var pos = new BlockPos.MutableBlockPos();
             for (int j = 0; j < size; j++) {
@@ -102,10 +137,16 @@ public final class ClimateMap {
                     Climate.unquantizeCoord(point.continentalness())
                 );
                 var at = new ClimateModel.Conditions(
-                    y, moment.season(), moment.season(), moment.dayTime(), moment.rain(), moment.thunder(),
-                    0, false, terrain
+                    y, moment.season(), moment.season(), moment.dayTime(), 0, 0, 0, 0, false, terrain
                 );
-                var b = ClimateModel.breakdown(level, pos, biome, noise, at);
+                int a = i / ws, bb = j / ws;
+                double fa = (double) (i % ws) / ws, fb = (double) (j % ws) / ws;
+                var raw = ClimateWeather.Raw.lerp(fb,
+                    ClimateWeather.Raw.lerp(fa, coarseWeather[a * wc + bb], coarseWeather[(a + 1) * wc + bb]),
+                    ClimateWeather.Raw.lerp(fa, coarseWeather[a * wc + bb + 1], coarseWeather[(a + 1) * wc + bb + 1]));
+                var w = ClimateWeather.finish(raw, biome.value().hasPrecipitation());
+                weather[k] = w;
+                var b = ClimateModel.breakdown(level, pos, biome, noise, at.withWeather(w.precipitation(), w.thunder(), w.cloud()));
                 biomes[k] = biome;
                 celsius[k] = ClimatePrecipitation.celsius(biome, b);
                 values[k] = switch (layer) {
@@ -115,6 +156,11 @@ public final class ClimateMap {
                     case AMPLITUDE -> b.amplitude();
                     case HUMIDITY -> b.relativeHumidity();
                     case DRYNESS -> b.dryness();
+                    case PRESSURE -> w.pressure();
+                    case WIND -> w.windSpeed();
+                    case CLOUD -> w.cloud();
+                    case PRECIPITATION -> w.precipitation();
+                    case FOG -> w.fog();
                 };
             }
         });
@@ -139,11 +185,18 @@ public final class ClimateMap {
                     case DRYNESS -> ramp(v, 0x4daf4a, 0xfee08b, 0xd73027);
                     case SNOW -> celsius[k] < c.snowCelsius() ? 0xeef6ff : 0x5b8c3a;
                     case BIOME -> biomeColor(biomes[k]);
+                    case PRESSURE -> ramp((v + 18) / 36, 0x2c4fb5, 0xf2f2f2, 0xd7301f);
+                    case WIND -> ramp(v / 20, 0xf7fbff, 0x6baed6, 0x08306b, 0x7a0177);
+                    case CLOUD -> ramp(v, 0x3a7bd5, 0xd9d9d9, 0x525252);
+                    case PRECIPITATION -> v <= 0 ? 0xf2efe6 : ramp(v, 0xa6dba0, 0x1b7837, 0x40004b);
+                    case FOG -> ramp(v, 0x1f3b4d, 0xbdd7e7, 0xffffff);
                 };
                 // Biome borders, slightly darker, for orientation
                 boolean border = i + 1 < size && biomes[k] != biomes[k + size]
                     || j + 1 < size && biomes[k] != biomes[k + 1];
-                if (border && layer != Layer.BIOME) {
+                boolean weatherLayer = layer == Layer.PRESSURE || layer == Layer.WIND || layer == Layer.CLOUD
+                    || layer == Layer.PRECIPITATION || layer == Layer.FOG;
+                if (border && layer != Layer.BIOME && !weatherLayer) {
                     rgb = shade(rgb, 0.8);
                 }
                 // The snow line as a dark contour on temperature maps
@@ -159,6 +212,16 @@ public final class ClimateMap {
             image.setRGB(Mth.clamp(m + d, 0, size - 1), m, 0xff00ff);
             image.setRGB(m, Mth.clamp(m + d, 0, size - 1), 0xff00ff);
         }
+        if (layer == Layer.WIND || layer == Layer.PRESSURE) {
+            drawArrows(image, size, weather);
+        }
+        if (layer == Layer.PRECIPITATION || layer == Layer.CLOUD) {
+            for (int k = 0; k < size * size; k++) {
+                if (weather[k].thunder() > 0.3 && (k / size + k % size) % 3 == 0) {
+                    image.setRGB(k / size, k % size, 0xffd700);
+                }
+            }
+        }
         drawLegend(image, size, layer);
 
         var dir = level.getServer().getWorldPath(LevelResource.ROOT).resolve("driftward").resolve("climate");
@@ -168,6 +231,35 @@ public final class ClimateMap {
         ImageIO.write(image, "png", file.toFile());
         return new Result(file.toAbsolutePath().normalize(), size, size, min, max, sum / (size * size),
             (double) below / (size * size));
+    }
+
+    // Wind direction every 24 pixels: a line pointing downwind with a dot at its head
+    private static void drawArrows(BufferedImage image, int size, ClimateWeather.State[] weather) {
+        for (int i = 12; i < size; i += 24) {
+            for (int j = 12; j < size; j += 24) {
+                var w = weather[i * size + j];
+                double speed = w.windSpeed();
+                if (speed < 0.5) {
+                    continue;
+                }
+                double len = Math.min(11, 3 + speed * 0.5);
+                double dx = w.windX() / speed, dz = w.windZ() / speed;
+                for (double t = -len; t <= len; t += 0.5) {
+                    int px = (int) Math.round(i + dx * t), pz = (int) Math.round(j + dz * t);
+                    if (px >= 0 && pz >= 0 && px < size && pz < size) {
+                        image.setRGB(px, pz, 0x111111);
+                    }
+                }
+                for (int a = -1; a <= 1; a++) {
+                    for (int b = -1; b <= 1; b++) {
+                        int px = (int) Math.round(i + dx * len) + a, pz = (int) Math.round(j + dz * len) + b;
+                        if (px >= 0 && pz >= 0 && px < size && pz < size) {
+                            image.setRGB(px, pz, 0x111111);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private static boolean isContour(double[] celsius, int size, int i, int j, double line) {
@@ -204,6 +296,11 @@ public final class ClimateMap {
                 case HUMIDITY -> ramp(f, 0x8c6d3f, 0xe8dcb0, 0x4daf4a, 0x2166ac);
                 case DRYNESS -> ramp(f, 0x4daf4a, 0xfee08b, 0xd73027);
                 case SNOW, BIOME -> 0x000000;
+                case PRESSURE -> ramp(f, 0x2c4fb5, 0xf2f2f2, 0xd7301f);
+                case WIND -> ramp(f, 0xf7fbff, 0x6baed6, 0x08306b, 0x7a0177);
+                case CLOUD -> ramp(f, 0x3a7bd5, 0xd9d9d9, 0x525252);
+                case PRECIPITATION -> ramp(f, 0xa6dba0, 0x1b7837, 0x40004b);
+                case FOG -> ramp(f, 0x1f3b4d, 0xbdd7e7, 0xffffff);
             };
             for (int y = 0; y < LEGEND; y++) {
                 image.setRGB(x, image.getHeight() - LEGEND + y, y < 2 ? 0x000000 : rgb);

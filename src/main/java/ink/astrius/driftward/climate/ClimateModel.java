@@ -45,13 +45,17 @@ public final class ClimateModel {
     // What the model needs besides the position and biome.
     // - surface: top of the column (roofs count); anything at or below the position means open sky
     // - season / waterSeason: -1 (coldest) .. 1 (warmest); water lags the air
-    // - rain / thunder: 0..1
+    // - rain / thunder / cloud: 0..1
     // - shelter: 0 in the open .. 1 with no sky light at all
     // - terrain: ground height (no leaves) at a column, for valley pooling; null skips pooling
     public record Conditions(
         int surface, double season, double waterSeason, long dayTime,
-        double rain, double thunder, double shelter, boolean inWater, IntBinaryOperator terrain
-    ) {}
+        double rain, double thunder, double cloud, double shelter, boolean inWater, IntBinaryOperator terrain
+    ) {
+        public Conditions withWeather(double rain, double thunder, double cloud) {
+            return new Conditions(surface, season, waterSeason, dayTime, rain, thunder, cloud, shelter, inWater, terrain);
+        }
+    }
 
     // Every term of the result, for the climate commands. `celsius` is what Thermoo gets.
     public record Breakdown(
@@ -108,8 +112,9 @@ public final class ClimateModel {
     }
 
     // Live conditions at a loaded position. `outdoor` ignores shelter and water: the air above the
-    // spot, which is what snow and ice follow.
-    public static Conditions live(Level level, BlockPos pos, boolean outdoor) {
+    // spot, which is what snow and ice follow. Cloud comes from the weather layer; rain and thunder
+    // too once it drives precipitation, until then from vanilla's global weather.
+    public static Conditions live(Level level, BlockPos pos, Holder<Biome> biome, boolean outdoor) {
         var c = ClimateConstants.get();
         int surface = level.getHeight(Heightmap.Types.WORLD_SURFACE, pos.getX(), pos.getZ());
         double shelter = 0;
@@ -118,14 +123,32 @@ public final class ClimateModel {
             shelter = 1 - level.getBrightness(LightLayer.SKY, pos) / 15.0;
             inWater = level.getFluidState(pos).is(FluidTags.WATER);
         }
-        return new Conditions(
+        double rain = level.getRainLevel(1);
+        double thunder = level.getThunderLevel(1);
+        var at = new Conditions(
             surface,
             ClimateSeasons.factor(level, c.seasonPeak()),
             ClimateSeasons.factor(level, c.seasonPeak(), c.waterLag()),
             level.getDayTime(),
-            level.getRainLevel(1), level.getThunderLevel(1),
-            shelter, inWater, terrain(level)
+            rain, thunder, rain, shelter, inWater, terrain(level)
         );
+        var weather = weather(level, pos, biome, sample(level, pos), at);
+        if (weather == ClimateWeather.CALM) {
+            return at;
+        }
+        return c.weatherDrivesRain()
+            ? at.withWeather(weather.precipitation(), weather.thunder(), weather.cloud())
+            : at.withWeather(rain, thunder, Math.max(rain, weather.cloud()));
+    }
+
+    // The weather at a position under the given conditions (their own weather is ignored)
+    public static ClimateWeather.State weather(Level level, BlockPos pos, Holder<Biome> biome, Noise noise, Conditions at) {
+        if (!(level instanceof ServerLevel serverLevel) || !ClimateConstants.get().weatherEnabled()) {
+            return ClimateWeather.CALM;
+        }
+        var climate = breakdown(level, pos, biome, noise, at.withWeather(0, 0, 0));
+        return ClimateWeather.at(serverLevel.getSeed(), pos.getX(), pos.getZ(), pos.getY(), level.getGameTime(),
+            climate, biome.value().hasPrecipitation(), at.terrain());
     }
 
     public static double temperature(Level level, BlockPos pos, Holder<Biome> biome) {
@@ -133,7 +156,7 @@ public final class ClimateModel {
     }
 
     public static Breakdown breakdown(Level level, BlockPos pos, Holder<Biome> biome) {
-        return breakdown(level, pos, biome, sample(level, pos), live(level, pos, false));
+        return breakdown(level, pos, biome, sample(level, pos), live(level, pos, biome, false));
     }
 
     public static Breakdown breakdown(Level level, BlockPos pos, Holder<Biome> biome, Noise noise, Conditions at) {
@@ -222,7 +245,7 @@ public final class ClimateModel {
         // Day and night: dry air makes hot days and cold nights; clouds flatten both
         double day = Math.cos(2 * Math.PI * ((at.dayTime() % 24000) - c.diurnalPeakTick()) / 24000.0);
         double diurnalAmplitude = deeperDown ? 0
-            : c.diurnalAmplitude() * (1 + c.diurnalArid() * dryness) * (1 - c.cloudDamping() * rain)
+            : c.diurnalAmplitude() * (1 + c.diurnalArid() * dryness) * (1 - c.cloudDamping() * Mth.clamp(at.cloud(), 0, 1))
                 * (ocean ? c.diurnalOcean() : 1);
         double diurnal = diurnalAmplitude * day * open;
 

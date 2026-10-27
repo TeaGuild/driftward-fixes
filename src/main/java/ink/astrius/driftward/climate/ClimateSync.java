@@ -104,8 +104,8 @@ public record ClimateSync(
                 }
                 int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z);
                 pos.setY(y);
-                var at = ClimateModel.live(level, pos, true);
                 var biome = level.getBiome(pos);
+                var at = ClimateModel.live(level, pos, biome, true);
                 var breakdown = ClimateModel.breakdown(level, pos, biome, ClimateModel.sample(level, pos), at);
                 celsius[k] = (float) ClimatePrecipitation.celsius(biome, breakdown);
                 surface[k] = (short) y;

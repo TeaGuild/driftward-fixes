@@ -82,6 +82,15 @@ public final class ClimateConfig {
     public final ModConfigSpec.BooleanValue surfaceEnabled;
     public final ModConfigSpec.DoubleValue surfaceMargin;
 
+    public final ModConfigSpec.BooleanValue weatherEnabled;
+    public final ModConfigSpec.BooleanValue weatherDrivesRain;
+    public final ModConfigSpec.DoubleValue weatherSteering;
+    public final ModConfigSpec.DoubleValue weatherDrift;
+    public final ModConfigSpec.DoubleValue weatherEvolveTicks;
+    public final ModConfigSpec.DoubleValue weatherGradientWind;
+    public final ModConfigSpec.DoubleValue weatherOrographic;
+    public final ModConfigSpec.DoubleValue weatherRainCloud;
+
     public final ModConfigSpec.BooleanValue humidityEnabled;
 
     public final ModConfigSpec.BooleanValue cropsEnabled;
@@ -265,6 +274,27 @@ public final class ClimateConfig {
         surfaceMargin = b.comment("Only change snow and ice this far (Celsius, daily mean) from the snow line, so nothing",
                 "flickers around freezing")
             .defineInRange("surfaceMargin", 3.0, 0.0, 30.0);
+        b.pop();
+
+        b.comment("Weather layer over the climate: drifting highs and lows, wind, cloud, precipitation and fog,",
+                "computed from the seed, position and time (no saved state)")
+            .push("weather");
+        weatherEnabled = b.define("enabled", true);
+        weatherDrivesRain = b.comment("Rain and thunder come from the weather layer instead of vanilla's global weather",
+                "(off until local rain is rendered on clients; cloud is always used)")
+            .define("drivesRain", false);
+        weatherSteering = b.comment("Prevailing west-to-east wind (m/s)")
+            .defineInRange("steering", 6.0, 0.0, 50.0);
+        weatherDrift = b.comment("How fast weather systems drift east (blocks per tick)")
+            .defineInRange("drift", 0.06, 0.0, 10.0);
+        weatherEvolveTicks = b.comment("Ticks for weather systems to change shape noticeably")
+            .defineInRange("evolveTicks", 72000.0, 1000.0, 10000000.0);
+        weatherGradientWind = b.comment("Wind around highs and lows per unit of pressure gradient")
+            .defineInRange("gradientWind", 50.0, 0.0, 1000.0);
+        weatherOrographic = b.comment("Cloud from air pushed uphill, per (m/s × slope)")
+            .defineInRange("orographic", 0.08, 0.0, 10.0);
+        weatherRainCloud = b.comment("Cloud cover where precipitation starts")
+            .defineInRange("rainCloud", 0.62, 0.0, 1.0);
         b.pop();
 
         b.push("humidity_component");

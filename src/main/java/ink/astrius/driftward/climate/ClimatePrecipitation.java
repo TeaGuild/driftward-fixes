@@ -57,7 +57,7 @@ public final class ClimatePrecipitation {
         if (correction != null && correction.glacier()) {
             return 0;
         }
-        var climate = ClimateModel.breakdown(level, pos, biome, ClimateModel.sample(level, pos), ClimateModel.live(level, pos, true));
+        var climate = ClimateModel.breakdown(level, pos, biome, ClimateModel.sample(level, pos), ClimateModel.live(level, pos, biome, true));
         double freezing = climate.water() && biome.is(ClimateSurface.OCEAN) ? c.seawaterMin() : c.freshwaterMin();
         return 0.15 + (climate.waterCelsius() - freezing - 0.5) / c.celsiusPerUnit();
     }
@@ -87,7 +87,7 @@ public final class ClimatePrecipitation {
                 return cached;
             }
         }
-        var at = ClimateModel.live(level, pos, true);
+        var at = ClimateModel.live(level, pos, biome, true);
         double celsius = celsius(biome, ClimateModel.breakdown(level, pos, biome, ClimateModel.sample(level, pos), at));
         synchronized (CACHE) {
             CACHE.put(key, celsius);

@@ -89,7 +89,7 @@ public final class ClimateSurface {
                     Climate.unquantizeCoord(point.humidity()),
                     Climate.unquantizeCoord(point.continentalness())
                 );
-                var at = new ClimateModel.Conditions(y, season, waterSeason, dailyMean, 0, 0, 0, false, null);
+                var at = new ClimateModel.Conditions(y, season, waterSeason, dailyMean, 0, 0, 0, 0, false, null);
                 var climate = ClimateModel.breakdown(level, pos, biome, noise, at);
                 var correction = biome.getData(BiomeClimate.DATA_MAP);
                 boolean glacier = correction != null && correction.glacier();

@@ -96,7 +96,10 @@ public final class ClimateCommand {
                             .executes(ClimateCommand::map)
                             .then(season
                                 .executes(ClimateCommand::map)
-                                .then(time.executes(ClimateCommand::map)))))))
+                                .then(time
+                                    .executes(ClimateCommand::map)
+                                    .then(Commands.argument("ahead", IntegerArgumentType.integer(-240, 240))
+                                        .executes(ClimateCommand::map))))))))
             .then(Commands.literal("surface")
                 .executes(ctx -> surface(ctx.getSource(), 4))
                 .then(Commands.argument("radius", IntegerArgumentType.integer(0, 32))
@@ -148,8 +151,12 @@ public final class ClimateCommand {
         line(out, "day", "swing ±%.1f × %.2f (time %d) → %s",
             b.diurnalAmplitude(), b.day(), level.getDayTime() % 24000, signed(b.diurnal()));
         line(out, "shelter", "%.0f%%", b.shelter() * 100);
-        line(out, "weather", "rain %.2f, thunder %.2f → %s",
-            level.getRainLevel(1), level.getThunderLevel(1), signed(b.weather()));
+        var w = ClimateModel.weather(level, pos, biome, b.noise(), ClimateModel.live(level, pos, biome, false));
+        line(out, "weather", "pressure %+.0f hPa, wind %.0f m/s from %.0f°, cloud %.0f%%, precipitation %.0f%%, thunder %.0f%%, fog %.0f%%",
+            w.pressure(), w.windSpeed(), w.windFrom(), w.cloud() * 100, w.precipitation() * 100, w.thunder() * 100, w.fog() * 100);
+        line(out, "rain", "vanilla rain %.2f, thunder %.2f%s → %s",
+            level.getRainLevel(1), level.getThunderLevel(1),
+            ClimateConstants.get().weatherDrivesRain() ? " (model uses the weather layer)" : "", signed(b.weather()));
         line(out, "wind", "%s", signed(b.wind()));
         line(out, "pooling", "valley %.0f%% → %s", b.valley() * 100, signed(b.pooling()));
         line(out, "air", "%s", c(b.airCelsius()));
@@ -206,7 +213,7 @@ public final class ClimateCommand {
         var c = ClimateConstants.get();
         var biome = level.getBiome(pos);
         var noise = ClimateModel.sample(level, pos);
-        var live = ClimateModel.live(level, pos, false);
+        var live = ClimateModel.live(level, pos, biome, false);
         var out = Component.empty();
         out.append(header("Year at %d %d %d".formatted(pos.getX(), pos.getY(), pos.getZ())))
             .append(" ").append(Component.literal(id(biome) + ", clear weather").withStyle(ChatFormatting.GRAY));
@@ -236,7 +243,7 @@ public final class ClimateCommand {
         ClimateModel.Conditions live, double season, double water, long time
     ) {
         var at = new ClimateModel.Conditions(
-            live.surface(), season, water, time, 0, 0, live.shelter(), live.inWater(), live.terrain()
+            live.surface(), season, water, time, 0, 0, 0, live.shelter(), live.inWater(), live.terrain()
         );
         return ClimateModel.breakdown(level, pos, biome, noise, at);
     }
@@ -281,9 +288,9 @@ public final class ClimateCommand {
             case "average" -> (long) c.diurnalPeakTick() + 6000;
             default -> throw new SimpleCommandExceptionType(Component.literal("Unknown time " + timeName)).create();
         };
-        boolean nowWeather = seasonName.equals("now") && timeName.equals("now");
-        var moment = new ClimateMap.Moment(seasonName + "-" + timeName, season, time,
-            nowWeather ? level.getRainLevel(1) : 0, nowWeather ? level.getThunderLevel(1) : 0);
+        int ahead = optional(ctx, "ahead", 0, Integer.class);
+        var moment = new ClimateMap.Moment(seasonName + "-" + timeName + (ahead != 0 ? "-plus" + ahead + "h" : ""),
+            season, time + ahead * 1000L, level.getGameTime() + ahead * 1000L);
 
         var center = BlockPos.containing(source.getPosition());
         int size = radius * 2 / step + 1;
@@ -316,7 +323,12 @@ public final class ClimateCommand {
             var out = Component.empty().append(header("Climate map"))
                 .append(Component.literal(" %s, %s, %.1f s".formatted(layer.id(), moment.name(), seconds)).withStyle(ChatFormatting.GRAY));
             if (layer != ClimateMap.Layer.BIOME) {
-                String unit = layer == ClimateMap.Layer.HUMIDITY || layer == ClimateMap.Layer.DRYNESS ? "" : " °C";
+                String unit = switch (layer) {
+                    case PRESSURE -> " hPa";
+                    case WIND -> " m/s";
+                    case HUMIDITY, DRYNESS, CLOUD, PRECIPITATION, FOG -> "";
+                    default -> " °C";
+                };
                 line(out, "range", "%.2f%s .. %.2f%s, average %.2f%s", result.min(), unit, result.max(), unit, result.average(), unit);
             }
             line(out, "below snow line", "%.0f%% of the area", result.belowSnow() * 100);
