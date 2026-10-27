@@ -85,11 +85,14 @@ public record ClimateSync(
     public static void register(IEventBus modBus) {
         modBus.addListener(ClimateSync::registerPayloads);
         NeoForge.EVENT_BUS.addListener(ClimateSync::onPlayerTick);
+        ClimateCloudField.register();
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
         // Optional: clients without the mod just keep Serene Seasons' own behaviour
-        event.registrar("3").optional().playToClient(TYPE, STREAM_CODEC, ClimateSync::handle);
+        var registrar = event.registrar("3").optional();
+        registrar.playToClient(TYPE, STREAM_CODEC, ClimateSync::handle);
+        registrar.playToClient(ClimateCloudField.TYPE, ClimateCloudField.STREAM_CODEC, ClimateCloudField::handle);
     }
 
     private static void handle(ClimateSync grid, IPayloadContext ctx) {

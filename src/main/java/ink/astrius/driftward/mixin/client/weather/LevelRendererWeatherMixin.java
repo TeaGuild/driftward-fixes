@@ -2,6 +2,7 @@ package ink.astrius.driftward.mixin.client.weather;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import ink.astrius.driftward.client.ClimateClouds;
 import ink.astrius.driftward.climate.ClimateLocalWeather;
 import ink.astrius.driftward.climate.ClimateSync;
 import net.minecraft.client.Minecraft;
@@ -12,21 +13,18 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
 // Rain and snow are drawn, splash and sound only in columns where the local weather has
-// precipitation and the ground is below the cloud base. Vanilla's cloud layer sits at the local cloud
-// base, thins out under clear skies and darkens under storms.
+// precipitation and the ground is below the cloud base. The cloud layer's texture comes from the
+// weather (ClimateClouds), so vanilla's own drift is off.
 @Mixin(LevelRenderer.class)
 public class LevelRendererWeatherMixin {
-    @Inject(method = "renderClouds", at = @At("HEAD"), cancellable = true)
-    private void clearSky(CallbackInfo ci) {
-        var level = Minecraft.getInstance().level;
-        if (level != null && level.dimension() == Level.OVERWORLD && ClimateLocalWeather.active(level)
-            && ClimateSync.Grid.here(2) < 0.15f) {
-            ci.cancel();
-        }
+    // Our cloud texture is anchored to the world and drifts with the wind itself
+    @ModifyConstant(method = "renderClouds", constant = @Constant(floatValue = 0.03f))
+    private float noVanillaDrift(float drift) {
+        return ClimateClouds.installed() ? 0 : drift;
     }
 
     @WrapOperation(
