@@ -46,6 +46,22 @@ public final class ClimatePrecipitation {
         return Double.isNaN(celsius) ? Double.NaN : ClimateConstants.get().toVanilla(celsius);
     }
 
+    // For melting ice: the water under it, which warms later than the air (lake ice lasts into
+    // spring). Vanilla scale, melting from 0.15. NaN to leave it to Serene Seasons.
+    public static double iceVanillaTemperature(Level level, Holder<Biome> biome, BlockPos pos) {
+        if (!(level instanceof ServerLevel) || !applies(level) || biome.is(SEASONS_BLACKLIST) || !level.isLoaded(pos)) {
+            return Double.NaN;
+        }
+        var c = ClimateConstants.get();
+        var correction = biome.getData(BiomeClimate.DATA_MAP);
+        if (correction != null && correction.glacier()) {
+            return 0;
+        }
+        var climate = ClimateModel.breakdown(level, pos, biome, ClimateModel.sample(level, pos), ClimateModel.live(level, pos, true));
+        double freezing = climate.water() && biome.is(ClimateSurface.OCEAN) ? c.seawaterMin() : c.freshwaterMin();
+        return 0.15 + (climate.waterCelsius() - freezing - 0.5) / c.celsiusPerUnit();
+    }
+
     // The temperature snow and ice follow: the outdoor air, capped below the snow line on glaciers
     public static double celsius(Holder<Biome> biome, ClimateModel.Breakdown climate) {
         var correction = biome.getData(BiomeClimate.DATA_MAP);

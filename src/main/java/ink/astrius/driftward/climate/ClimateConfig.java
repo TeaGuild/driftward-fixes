@@ -77,6 +77,11 @@ public final class ClimateConfig {
     public final ModConfigSpec.IntValue syncRadius;
     public final ModConfigSpec.IntValue syncSpacing;
 
+    public final ModConfigSpec.DoubleValue meltPercent;
+    public final ModConfigSpec.IntValue meltRolls;
+    public final ModConfigSpec.BooleanValue surfaceEnabled;
+    public final ModConfigSpec.DoubleValue surfaceMargin;
+
     public final ModConfigSpec.BooleanValue humidityEnabled;
 
     public final ModConfigSpec.BooleanValue cropsEnabled;
@@ -249,6 +254,17 @@ public final class ClimateConfig {
             .defineInRange("syncRadius", 4, 1, 16);
         syncSpacing = b.comment("Blocks between grid cells")
             .defineInRange("syncSpacing", 8, 2, 64);
+        meltPercent = b.comment("Serene Seasons melting, all year: chance per roll (percent) that a random surface block is",
+                "checked; whether it melts is up to the temperature (replaces the per-season melt settings)")
+            .defineInRange("meltPercent", 25.0, 0.0, 100.0);
+        meltRolls = b.comment("Rolls per chunk per tick")
+            .defineInRange("meltRolls", 1, 0, 16);
+        surfaceEnabled = b.comment("When a chunk loads, bring its snow and ice in line with the current climate before",
+                "players see it (chunks keep last winter's snow otherwise)")
+            .define("surfaceCatchUp", true);
+        surfaceMargin = b.comment("Only change snow and ice this far (Celsius, daily mean) from the snow line, so nothing",
+                "flickers around freezing")
+            .defineInRange("surfaceMargin", 3.0, 0.0, 30.0);
         b.pop();
 
         b.push("humidity_component");

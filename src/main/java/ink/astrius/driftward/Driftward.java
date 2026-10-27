@@ -6,6 +6,7 @@ import ink.astrius.driftward.climate.ClimateConstants;
 import ink.astrius.driftward.climate.ClimateEnvironmentProvider;
 import ink.astrius.driftward.climate.ClimateCommand;
 import ink.astrius.driftward.climate.ClimateLife;
+import ink.astrius.driftward.climate.ClimateSurface;
 import ink.astrius.driftward.climate.ClimateSync;
 import ink.astrius.driftward.config.ClientConfig;
 import ink.astrius.driftward.config.ServerConfig;
@@ -54,6 +55,7 @@ public class Driftward {
         ClimateSync.register(modBus);
         ClimateLife.register();
         ClimateCommand.register();
+        ClimateSurface.register();
         NeoForge.EVENT_BUS.addListener(GrindstoneHandler::grindstoneEventHandler);
         if (crystallarieumAmberCompat != null) {
             crystallarieumAmberCompat.register();

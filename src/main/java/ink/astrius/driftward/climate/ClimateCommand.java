@@ -97,6 +97,10 @@ public final class ClimateCommand {
                             .then(season
                                 .executes(ClimateCommand::map)
                                 .then(time.executes(ClimateCommand::map)))))))
+            .then(Commands.literal("surface")
+                .executes(ctx -> surface(ctx.getSource(), 4))
+                .then(Commands.argument("radius", IntegerArgumentType.integer(0, 32))
+                    .executes(ctx -> surface(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "radius")))))
             .then(Commands.literal("reload").executes(ctx -> {
                 ClimateConstants.reload();
                 ClimateModel.clearCache();
@@ -165,6 +169,34 @@ public final class ClimateCommand {
 
         source.sendSuccess(() -> out, false);
         return (int) Math.round(b.celsius());
+    }
+
+    // Surface: the chunk-load snow and ice catch-up, run now on loaded chunks around the source
+
+    private static int surface(CommandSourceStack source, int radius) throws CommandSyntaxException {
+        var level = level(source);
+        var center = new net.minecraft.world.level.ChunkPos(BlockPos.containing(source.getPosition()));
+        int chunks = 0, blocks = 0;
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                var chunk = level.getChunkSource().getChunkNow(center.x + dx, center.z + dz);
+                if (chunk == null) {
+                    continue;
+                }
+                int changed = ClimateSurface.patch(level, chunk);
+                if (changed > 0) {
+                    // Loaded chunks are already on clients
+                    level.getChunkSource().chunkMap.getPlayers(chunk.getPos(), false)
+                        .forEach(p -> p.connection.send(new net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket(
+                            chunk, level.getLightEngine(), null, null)));
+                }
+                chunks++;
+                blocks += changed;
+            }
+        }
+        int c = chunks, b = blocks;
+        source.sendSuccess(() -> Component.literal("Snow and ice brought in line with the climate: %d blocks in %d chunks".formatted(b, c)), true);
+        return blocks;
     }
 
     // Year
