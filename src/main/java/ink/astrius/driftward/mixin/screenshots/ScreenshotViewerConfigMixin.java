@@ -24,6 +24,19 @@ public class ScreenshotViewerConfigMixin {
         return true;
     }
 
+    // `screenshots/` doesn't exist until the first screenshot, so the default failed validation,
+    // got "corrected" to itself and rewritten, and the file watcher reloaded it every 2 seconds
+    @Redirect(
+        method = "validDirectory",
+        at = @At(
+            value = "INVOKE",
+            target = "Ljava/io/File;exists()Z"
+        )
+    )
+    public boolean createIfMissing(File instance) {
+        return instance.exists() || instance.mkdirs();
+    }
+
     @Redirect(
         method = {"lambda$new$0", "lambda$new$1"},
         at = @At(
