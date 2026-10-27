@@ -2,6 +2,7 @@ package ink.astrius.driftward.mixin;
 
 import com.google.gson.JsonElement;
 import fzzyhmstrs.emi_loot.EMILoot;
+import ink.astrius.driftward.emi.LootModifierPreview;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.core.LayeredRegistryAccess;
@@ -67,7 +68,11 @@ public class EmiLootLootJSCompat {
             .ifPresent(registry ->
                 EMILoot.parseTables(
                     remix_core$resourceManager,
-                    (Registry<LootTable>) registry,
+                    LootModifierPreview.withModifiers(
+                        remix_core$resourceManager,
+                        (Registry<LootTable>) registry,
+                        remix_core$registryOps
+                    ),
                     remix_core$registryOps
                 )
             );
