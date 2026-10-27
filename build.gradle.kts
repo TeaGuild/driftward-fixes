@@ -130,6 +130,7 @@ dependencies {
     compileOnly("maven.modrinth:cc-terminals:3VT1i1B2")  // 0.1.1
     compileOnly("com.github.TheDeathlyCow:thermoo:v4.8.1-neoforge")
     compileOnly("maven.modrinth:serene-seasons:pHEgQQUE")  // 10.1.0.9, same as the pack
+    compileOnly("maven.modrinth:glitchcore:S2TfWrZR")  // 2.1.0.2, Serene Seasons' config types
     compileOnly("dev.yumi.mc.core:yumi-mc-foundation:1.0.0-beta.1+1.21.1") {
         attributes {
             attribute(Attribute.of("net.minecraft.mappings", String::class.java), "mojmap")
