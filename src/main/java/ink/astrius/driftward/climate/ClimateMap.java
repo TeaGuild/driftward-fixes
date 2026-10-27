@@ -107,9 +107,10 @@ public final class ClimateMap {
                 );
                 var b = ClimateModel.breakdown(level, pos, biome, noise, at);
                 biomes[k] = biome;
-                celsius[k] = b.airCelsius();
+                celsius[k] = ClimatePrecipitation.celsius(biome, b);
                 values[k] = switch (layer) {
-                    case TEMPERATURE, SNOW, BIOME -> b.airCelsius();
+                    case TEMPERATURE, BIOME -> b.airCelsius();
+                    case SNOW -> celsius[k];
                     case MEAN -> b.mean();
                     case AMPLITUDE -> b.amplitude();
                     case HUMIDITY -> b.relativeHumidity();

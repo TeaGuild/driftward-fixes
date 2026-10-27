@@ -46,6 +46,15 @@ public final class ClimatePrecipitation {
         return Double.isNaN(celsius) ? Double.NaN : ClimateConstants.get().toVanilla(celsius);
     }
 
+    // The temperature snow and ice follow: the outdoor air, capped below the snow line on glaciers
+    public static double celsius(Holder<Biome> biome, ClimateModel.Breakdown climate) {
+        var correction = biome.getData(BiomeClimate.DATA_MAP);
+        if (correction != null && correction.glacier()) {
+            return Math.min(climate.airCelsius(), ClimateConstants.get().snowCelsius() - 1);
+        }
+        return climate.airCelsius();
+    }
+
     private static double serverCelsius(ServerLevel level, Holder<Biome> biome, BlockPos pos) {
         if (!level.isLoaded(pos)) {
             return Double.NaN;
@@ -63,7 +72,7 @@ public final class ClimatePrecipitation {
             }
         }
         var at = ClimateModel.live(level, pos, true);
-        double celsius = ClimateModel.breakdown(level, pos, biome, ClimateModel.sample(level, pos), at).airCelsius();
+        double celsius = celsius(biome, ClimateModel.breakdown(level, pos, biome, ClimateModel.sample(level, pos), at));
         synchronized (CACHE) {
             CACHE.put(key, celsius);
         }
