@@ -87,6 +87,7 @@
   "client": [
     "client.BeeMovieMixin",
     "client.ClientRopeItemHandlerMixin",
+    "client.antique_atlas.TileElevationMixin",
     "client.EndSeaRendererMixin",
     "client.sodium.ScreenPromptWidgetsMixin",
     "client.LavenderStructureOverlayRendererMixin",
