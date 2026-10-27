@@ -39,8 +39,11 @@ public final class ClimateEnvironmentProvider implements EnvironmentProvider {
         if (!ClimateConstants.get().enabled()) {
             return;
         }
-        double celsius = ClimateModel.temperature(level, pos, biome);
-        builder.set(EnvironmentComponentTypes.TEMPERATURE, new TemperatureRecord(celsius, TemperatureUnit.CELSIUS));
+        var climate = ClimateModel.breakdown(level, pos, biome);
+        builder.set(EnvironmentComponentTypes.TEMPERATURE, new TemperatureRecord(climate.celsius(), TemperatureUnit.CELSIUS));
+        if (ClimateConstants.get().humidityEnabled()) {
+            builder.set(EnvironmentComponentTypes.RELATIVE_HUMIDITY, climate.relativeHumidity());
+        }
     }
 
     @Override

@@ -9,13 +9,25 @@ public record ClimateConstants(
     boolean enabled,
     double[] bandNoise, double[] bandCelsius, double lapsePerBlock,
     double[] amplitudeContinentalness, double[] amplitudeCelsius,
-    double tropicMean, double tropicHumidity, double tropicDamping, double maxAmplitude, double seasonPeak,
+    double warmStart, double warmFull, double warmDamping, double tropicHumidity, double tropicDamping,
+    double maxAmplitude, double seasonPeak,
     double humidityNoiseWeight, double dryFactor, double waterHumidity,
     double aridLimit, double aridAmplitude, double aridBonus,
     double snowTemperature, double snowMargin,
     double caveBase, double caveDepthStart, double caveDepthFull, double geothermalPerBlock,
-    double diurnalAmplitude, double diurnalArid, double diurnalPeakTick,
-    double deeperDownBase, double deeperDownScale
+    double diurnalAmplitude, double diurnalArid, double diurnalPeakTick, double diurnalOcean,
+    double deeperDownBase, double deeperDownScale,
+    double rainCooling, double dryRainCooling, double thunderCooling, double cloudDamping,
+    double shelterSeasonDamping, double shelterDiurnalDamping,
+    double windStart, double windFull, double windCooling, double windStorm,
+    double waterSeasonDamping, double waterLag, double waterDiurnalDamping, double freshwaterMin, double seawaterMin,
+    double poolRadius, double poolDepth, double poolCooling, double poolHeight,
+    boolean precipitationEnabled, double snowCelsius, double celsiusPerUnit,
+    int syncInterval, int syncRadius, int syncSpacing,
+    boolean humidityEnabled,
+    boolean cropsEnabled, double cropMinGrowth, double cropFrost, double cropKill, double cropFrostChance,
+    double hardyOffset,
+    boolean mobsEnabled, double coldMobMax, double warmMobMin
 ) {
     private static volatile ClimateConstants current;
 
@@ -33,14 +45,27 @@ public record ClimateConstants(
             cfg.enabled.get(),
             array(cfg.bandNoise.get()), array(cfg.bandCelsius.get()), cfg.lapsePerBlock.get(),
             array(cfg.amplitudeContinentalness.get()), array(cfg.amplitudeCelsius.get()),
-            cfg.tropicMean.get(), cfg.tropicHumidity.get(), cfg.tropicDamping.get(), cfg.maxAmplitude.get(),
-            cfg.seasonPeak.get(),
+            cfg.warmStart.get(), cfg.warmFull.get(), cfg.warmDamping.get(), cfg.tropicHumidity.get(),
+            cfg.tropicDamping.get(),
+            cfg.maxAmplitude.get(), cfg.seasonPeak.get(),
             cfg.humidityNoiseWeight.get(), cfg.dryFactor.get(), cfg.waterHumidity.get(),
             cfg.aridLimit.get(), cfg.aridAmplitude.get(), cfg.aridBonus.get(),
             cfg.snowTemperature.get(), cfg.snowMargin.get(),
             cfg.caveBase.get(), cfg.caveDepthStart.get(), cfg.caveDepthFull.get(), cfg.geothermalPerBlock.get(),
-            cfg.diurnalAmplitude.get(), cfg.diurnalArid.get(), cfg.diurnalPeakTick.get(),
-            cfg.deeperDownBase.get(), cfg.deeperDownScale.get()
+            cfg.diurnalAmplitude.get(), cfg.diurnalArid.get(), cfg.diurnalPeakTick.get(), cfg.diurnalOcean.get(),
+            cfg.deeperDownBase.get(), cfg.deeperDownScale.get(),
+            cfg.rainCooling.get(), cfg.dryRainCooling.get(), cfg.thunderCooling.get(), cfg.cloudDamping.get(),
+            cfg.shelterSeasonDamping.get(), cfg.shelterDiurnalDamping.get(),
+            cfg.windStart.get(), cfg.windFull.get(), cfg.windCooling.get(), cfg.windStorm.get(),
+            cfg.waterSeasonDamping.get(), cfg.waterLag.get(), cfg.waterDiurnalDamping.get(),
+            cfg.freshwaterMin.get(), cfg.seawaterMin.get(),
+            cfg.poolRadius.get(), cfg.poolDepth.get(), cfg.poolCooling.get(), cfg.poolHeight.get(),
+            cfg.precipitationEnabled.get(), cfg.snowCelsius.get(), cfg.celsiusPerUnit.get(),
+            cfg.syncInterval.get(), cfg.syncRadius.get(), cfg.syncSpacing.get(),
+            cfg.humidityEnabled.get(),
+            cfg.cropsEnabled.get(), cfg.cropMinGrowth.get(), cfg.cropFrost.get(), cfg.cropKill.get(),
+            cfg.cropFrostChance.get(), cfg.hardyOffset.get(),
+            cfg.mobsEnabled.get(), cfg.coldMobMax.get(), cfg.warmMobMin.get()
         );
         current = c;
         return c;
@@ -66,5 +91,10 @@ public record ClimateConstants(
             }
         }
         return ys[n - 1];
+    }
+
+    // Model Celsius as a vanilla biome temperature, with the snow line at vanilla's 0.15
+    public double toVanilla(double celsius) {
+        return 0.15 + (celsius - snowCelsius) / celsiusPerUnit;
     }
 }
