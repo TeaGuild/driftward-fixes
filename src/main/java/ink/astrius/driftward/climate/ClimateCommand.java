@@ -38,6 +38,8 @@ import java.util.stream.Stream;
 // /driftward climate probe [pos]   every term of the model at a position, plus what Thermoo applies
 // /driftward climate year [pos]    day and night temperatures through the year
 // /driftward climate map <radius> [step] [layer] [season] [time]   PNG of the model over an area
+// /driftward climate find <kind> [radius]   nearest rain, snow, storm, fog or clear sky, with a teleport
+// /driftward climate surface [radius]       run the snow and ice catch-up on loaded chunks
 // /driftward climate reload        re-read the climate config section
 public final class ClimateCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger("driftward/climate");
@@ -100,6 +102,13 @@ public final class ClimateCommand {
                                     .executes(ClimateCommand::map)
                                     .then(Commands.argument("ahead", IntegerArgumentType.integer(-240, 240))
                                         .executes(ClimateCommand::map))))))))
+            .then(Commands.literal("find")
+                .then(Commands.argument("kind", StringArgumentType.word())
+                    .suggests((ctx, b) -> SharedSuggestionProvider.suggest(
+                        Arrays.stream(ClimateFind.Kind.values()).map(ClimateFind.Kind::id), b))
+                    .executes(ctx -> find(ctx, 4096))
+                    .then(Commands.argument("radius", IntegerArgumentType.integer(64, 16384))
+                        .executes(ctx -> find(ctx, IntegerArgumentType.getInteger(ctx, "radius"))))))
             .then(Commands.literal("surface")
                 .executes(ctx -> surface(ctx.getSource(), 4))
                 .then(Commands.argument("radius", IntegerArgumentType.integer(0, 32))
@@ -176,6 +185,51 @@ public final class ClimateCommand {
 
         source.sendSuccess(() -> out, false);
         return (int) Math.round(b.celsius());
+    }
+
+    // Find: nearest weather of a kind, with a teleport
+
+    private static int find(CommandContext<CommandSourceStack> ctx, int radius) throws CommandSyntaxException {
+        var source = ctx.getSource();
+        var level = level(source);
+        var kindName = StringArgumentType.getString(ctx, "kind");
+        var kind = Arrays.stream(ClimateFind.Kind.values()).filter(k -> k.id().equals(kindName)).findFirst()
+            .orElseThrow(() -> new SimpleCommandExceptionType(Component.literal("Unknown weather " + kindName)).create());
+        var from = BlockPos.containing(source.getPosition());
+        int step = Math.max(32, radius / 64);
+        CompletableFuture.supplyAsync(() -> ClimateFind.nearest(level, from, kind, radius, step), MAP_POOL)
+            .whenComplete((found, error) -> level.getServer().execute(() -> {
+                if (error != null) {
+                    LOGGER.error("Climate find failed", error);
+                    source.sendFailure(Component.literal("Search failed: " + error.getCause()));
+                    return;
+                }
+                if (found.isEmpty()) {
+                    source.sendFailure(Component.literal("No %s within %d blocks".formatted(kind.id(), radius)));
+                    return;
+                }
+                var f = found.get();
+                var p = f.pos();
+                double dx = p.getX() - from.getX(), dz = p.getZ() - from.getZ();
+                String[] dirs = {"north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"};
+                String dir = f.distance() < 1 ? "here" : dirs[(int) Math.floorMod(Math.round(Math.toDegrees(Math.atan2(dx, -dz)) / 45), 8)];
+                var w = f.weather();
+                String tp = "/tp @s %d %d %d".formatted(p.getX(), p.getY() + 20, p.getZ());
+                var out = Component.empty().append(header("Nearest " + kind.id()))
+                    .append(Component.literal(" %.0f blocks %s, at %d %d".formatted(f.distance(), dir, p.getX(), p.getZ()))
+                        .withStyle(ChatFormatting.WHITE));
+                line(out, "there", "%.1f °C, cloud %.0f%%, precipitation %.0f%%, thunder %.0f%%, fog %.0f%%, wind %.0f m/s",
+                    f.celsius(), w.cloud() * 100, w.precipitation() * 100, w.thunder() * 100, w.fog() * 100, w.windSpeed());
+                out.append("\n").append(Component.literal("[teleport]").withStyle(s -> s
+                    .withColor(ChatFormatting.AQUA).withUnderlined(true)
+                    .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, tp))
+                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(tp)))));
+                LOGGER.info("Climate find {}: {} blocks {} at {} {}", kind.id(), Math.round(f.distance()), dir, p.getX(), p.getZ());
+                source.sendSuccess(() -> out, false);
+            }));
+        source.sendSuccess(() -> Component.literal("Looking for %s within %d blocks...".formatted(kind.id(), radius))
+            .withStyle(ChatFormatting.GRAY), false);
+        return 1;
     }
 
     // Surface: the chunk-load snow and ice catch-up, run now on loaded chunks around the source
