@@ -6,6 +6,7 @@ import dev.emi.emi.api.EmiRegistry;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.registry.EmiStackList;
 import ink.astrius.driftward.Driftward;
+import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
@@ -21,10 +22,13 @@ public class PotionsEmi {
 
         final var brewingRecipes = registry.getRecipeManager()
             .getAllRecipesFor(SpectrumRecipeTypes.POTION_WORKSHOP_BREWING);
+        final var addedPotions = new ObjectOpenCustomHashSet<>(new EmiStackList.StrictHashStrategy());
         for (var recipeHolder : brewingRecipes) {
             final var recipe = recipeHolder.value();
             final var result = EmiStack.of(recipe.getResultItem(null));
-            stacksIterator.add(result);
+            if (addedPotions.add(result)) {
+                stacksIterator.add(result);
+            }
         }
 
         registry.removeEmiStacks(stack -> {
