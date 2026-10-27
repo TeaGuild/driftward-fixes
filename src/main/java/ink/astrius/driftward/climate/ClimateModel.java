@@ -79,15 +79,28 @@ public final class ClimateModel {
         if (!(source.getGenerator() instanceof NoiseBasedChunkGenerator)) {
             return null;
         }
-        Climate.TargetPoint point = source.randomState().sampler().sample(
-            QuartPos.fromBlock(pos.getX()), QuartPos.fromBlock(pos.getY()), QuartPos.fromBlock(pos.getZ())
-        );
-        return new Noise(
+        // The climate noise never changes for a spot and is expensive (Terralith's splines), so it's
+        // cached per quart (4×4×4 blocks)
+        int qx = QuartPos.fromBlock(pos.getX()), qy = QuartPos.fromBlock(pos.getY()), qz = QuartPos.fromBlock(pos.getZ());
+        long key = BlockPos.asLong(qx, qy, qz) ^ ((long) System.identityHashCode(serverLevel) << 1);
+        var cached = NOISE.get(key);
+        if (cached != null) {
+            return cached;
+        }
+        Climate.TargetPoint point = source.randomState().sampler().sample(qx, qy, qz);
+        var noise = new Noise(
             Climate.unquantizeCoord(point.temperature()),
             Climate.unquantizeCoord(point.humidity()),
             Climate.unquantizeCoord(point.continentalness())
         );
+        if (NOISE.size() > 1 << 17) {
+            NOISE.clear();
+        }
+        NOISE.put(key, noise);
+        return noise;
     }
+
+    private static final java.util.concurrent.ConcurrentHashMap<Long, Noise> NOISE = new java.util.concurrent.ConcurrentHashMap<>();
 
     // Ground height for pooling and the weather: the loaded heightmap, nothing where the chunk isn't
     // loaded (never loads chunks). Only this terrain's valley depths are cached; maps pass their own.
@@ -128,7 +141,7 @@ public final class ClimateModel {
             level.getDayTime(),
             rain, thunder, rain, shelter, inWater, terrain(level)
         );
-        var weather = weather(level, pos, biome, sample(level, pos), at);
+        var weather = weather(level, pos, biome, null, at);
         if (weather == ClimateWeather.CALM) {
             return at;
         }
@@ -151,7 +164,7 @@ public final class ClimateModel {
             return ClimateWeather.CALM;
         }
         if (!(at.terrain() instanceof LiveTerrain)) {
-            return computeWeather(serverLevel, pos, biome, noise, at);
+            return computeWeather(serverLevel, pos, biome, noise != null ? noise : sample(level, pos), at);
         }
         long bucket = level.getGameTime() / WEATHER_TICKS;
         if (bucket != weatherBucket) {
@@ -164,7 +177,7 @@ public final class ClimateModel {
             return cached;
         }
         var surface = new BlockPos(pos.getX(), at.surface(), pos.getZ());
-        var weather = computeWeather(serverLevel, surface, biome, noise, at);
+        var weather = computeWeather(serverLevel, surface, biome, noise != null ? noise : sample(level, surface), at);
         if (WEATHER.size() > 1 << 14) {
             WEATHER.clear();
         }

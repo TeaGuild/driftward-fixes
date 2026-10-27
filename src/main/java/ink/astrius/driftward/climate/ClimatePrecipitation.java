@@ -14,9 +14,9 @@ import net.minecraft.world.level.biome.Biome;
 // Snow, ice, melting and rain-or-snow from the model instead of vanilla biome temperature.
 // Serene Seasons routes all of those through one hook, which `SeasonHooksMixin` redirects here.
 public final class ClimatePrecipitation {
-    // `isRainingAt` runs for every entity every tick while it rains, so answers are cached per
-    // 4×4×4 cell for a couple of seconds
-    private static final int CACHE_TICKS = 40;
+    // `isRainingAt` runs for every entity and (through Scorchful's sandstorms) every ticking chunk,
+    // every tick, so answers are cached per 8×8×8 cell for five seconds; the temperature moves slowly
+    private static final int CACHE_TICKS = 100;
     private static final Long2DoubleMap CACHE = new Long2DoubleOpenHashMap();
     private static long cacheBucket = Long.MIN_VALUE;
 
@@ -75,7 +75,7 @@ public final class ClimatePrecipitation {
         if (!level.isLoaded(pos)) {
             return Double.NaN;
         }
-        long key = BlockPos.asLong(pos.getX() >> 2, pos.getY() >> 2, pos.getZ() >> 2);
+        long key = BlockPos.asLong(pos.getX() >> 3, pos.getY() >> 3, pos.getZ() >> 3);
         long bucket = level.getGameTime() / CACHE_TICKS;
         synchronized (CACHE) {
             if (bucket != cacheBucket) {
