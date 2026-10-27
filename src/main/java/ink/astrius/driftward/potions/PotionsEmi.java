@@ -16,15 +16,11 @@ public class PotionsEmi {
         final var waterBottle = EmiStack.of(
             PotionContents.createItemStack(Items.POTION, Potions.WATER)
         );
+        final var stacksIterator = EmiStackList.stacks.listIterator();
+        while (stacksIterator.hasNext() && !stacksIterator.next().equals(waterBottle)) {}
+
         final var brewingRecipes = registry.getRecipeManager()
             .getAllRecipesFor(SpectrumRecipeTypes.POTION_WORKSHOP_BREWING);
-        final var stacksIterator = EmiStackList.stacks.listIterator();
-        while (stacksIterator.hasNext()) {
-            final var candidate = stacksIterator.next();
-            if (candidate.equals(waterBottle)) {
-                break;
-            }
-        }
         for (var recipeHolder : brewingRecipes) {
             final var recipe = recipeHolder.value();
             final var result = EmiStack.of(recipe.getResultItem(null));
