@@ -4,6 +4,7 @@ import com.sashafiesta.ccterminals.TerminalBlock;
 import ink.astrius.driftward.config.ClientConfig;
 import ink.astrius.driftward.config.ServerConfig;
 import ink.astrius.driftward.grindstone.GrindstoneHandler;
+import ink.astrius.driftward.potions.PigmentLootModifier;
 import ink.astrius.driftward.kube.DriftwardKubeJSPlugin;
 import ink.astrius.driftward.reg.CrystallarieumAmberCompat;
 import ink.astrius.driftward.reg.DriftwardReg;
@@ -42,6 +43,9 @@ public class Driftward {
         NeoForge.EVENT_BUS.addListener(GrindstoneHandler::grindstoneEventHandler);
         if (crystallarieumAmberCompat != null) {
             crystallarieumAmberCompat.register();
+        }
+        if (ModLoaded.SPECTRUM) {
+            DriftwardReg.LOOT_MODIFIERS.register("pigment_potions", () -> PigmentLootModifier.CODEC);
         }
         if (ModLoaded.KUBEJS) {
             DriftwardKubeJSPlugin.register(modBus);

@@ -13,6 +13,9 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import com.mojang.serialization.MapCodec;
+import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 
 import java.util.function.Supplier;
 
@@ -39,6 +42,9 @@ public class DriftwardReg {
             () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(Driftward.MOD_ID, "disenchanting"))
         );
 
+    public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> LOOT_MODIFIERS =
+        DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, Driftward.MOD_ID);
+
     public static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block) {
         final var res = BLOCKS.register(name, block);
         ITEMS.register(name, (b) -> new BlockItem(res.get(), new Item.Properties()));
@@ -51,5 +57,6 @@ public class DriftwardReg {
         CRITERIA_TRIGGERS.register(modBus);
         RECIPE_SERIALIZERS.register(modBus);
         RECIPE_TYPES.register(modBus);
+        LOOT_MODIFIERS.register(modBus);
     }
 }
