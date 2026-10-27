@@ -5,6 +5,7 @@ import dev.emi.emi.api.EmiInitRegistry;
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
 import dev.emi.emi.api.recipe.EmiRecipe;
+import ink.astrius.driftward.emi.ChalkEmi;
 import ink.astrius.driftward.emi.CreeperOverhaulEmi;
 import ink.astrius.driftward.grindstone.DisenchantingEmiRecipe;
 import ink.astrius.driftward.kube.DriftwardKubeJSPlugin;
@@ -41,6 +42,9 @@ public class DriftwardEmi implements EmiPlugin {
         }
         if (ModLoaded.SPECTRUM) {
             PotionsEmi.registerEmi(registry);
+        }
+        if (ModLoaded.CHALK) {
+            ChalkEmi.registerEmi(registry);
         }
         if (ModLoaded.CREEPER_OVERHAUL && ModLoaded.EMI_LOOT) {
             CreeperOverhaulEmi.registerEmi(registry);
