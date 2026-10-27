@@ -61,7 +61,20 @@ public final class ClimateSurface {
     // The climate of one 4×4 column cell at its daily mean
     private record Cell(Holder<Biome> biome, double snow, double air, double water, boolean frozenWater, boolean skip) {}
 
+    // What a patch changed, by kind
+    public static final class Stats {
+        public int snowAdded, snowMelted, uncovered, iceFrozen, iceThawed;
+
+        public int total() {
+            return snowAdded + snowMelted + uncovered + iceFrozen + iceThawed;
+        }
+    }
+
     public static int patch(ServerLevel level, LevelChunk chunk) {
+        return patch(level, chunk, new Stats());
+    }
+
+    public static int patch(ServerLevel level, LevelChunk chunk, Stats stats) {
         var c = ClimateConstants.get();
         var sampler = level.getChunkSource().randomState().sampler();
         double season = ClimateSeasons.factor(level, c.seasonPeak());
@@ -123,10 +136,12 @@ public final class ClimateSurface {
                 var aboveState = chunk.getBlockState(above);
 
                 // Thin snow isn't motion-blocking, so it sits above the heightmap's top block;
-                // thick snow is the top block itself
-                if (aboveState.is(Blocks.SNOW) || groundState.is(Blocks.SNOW)) {
+                // thick snow is the top block itself. Snow Real Magic's snow-covered plants, fences,
+                // slabs and so on melt back into what they cover.
+                boolean snowAbove = isSnow(aboveState);
+                if (snowAbove || isSnow(groundState)) {
                     if (cell.snow() > snowLine + margin) {
-                        set(chunk, aboveState.is(Blocks.SNOW) ? above : ground, Blocks.AIR.defaultBlockState(), changed);
+                        melt(chunk, snowAbove ? above : ground, changed, stats);
                     }
                     continue;
                 }
@@ -135,6 +150,7 @@ public final class ClimateSurface {
                 if (groundState.is(Blocks.ICE) && chunk.getFluidState(ground.below()).is(FluidTags.WATER)) {
                     if (!cell.frozenWater() && cell.water() > snowLine + margin) {
                         set(chunk, ground, Blocks.WATER.defaultBlockState(), changed);
+                        stats.iceThawed++;
                     }
                     continue;
                 }
@@ -143,6 +159,7 @@ public final class ClimateSurface {
                     && aboveState.isAir() && cell.frozenWater() && cell.air() < snowLine - margin
                     && level.getBrightness(LightLayer.BLOCK, above) < 10) {
                     set(chunk, ground, Blocks.ICE.defaultBlockState(), changed);
+                    stats.iceFrozen++;
                     continue;
                 }
 
@@ -150,6 +167,7 @@ public final class ClimateSurface {
                 if (aboveState.isAir() && cell.snow() < snowLine - margin && cell.biome().value().hasPrecipitation()
                     && canHoldSnow(chunk, ground, groundState) && level.getBrightness(LightLayer.BLOCK, above) < 10) {
                     set(chunk, above, Blocks.SNOW.defaultBlockState(), changed);
+                    stats.snowAdded++;
                 }
             }
         }
@@ -162,6 +180,59 @@ public final class ClimateSurface {
             }
         }
         return changed.size();
+    }
+
+    private static boolean isSnow(BlockState state) {
+        return state.is(Blocks.SNOW) || SnowRealMagic.covers(state);
+    }
+
+    private static void melt(LevelChunk chunk, BlockPos pos, ArrayList<BlockPos> changed, Stats stats) {
+        var state = chunk.getBlockState(pos);
+        if (!SnowRealMagic.covers(state)) {
+            set(chunk, pos, Blocks.AIR.defaultBlockState(), changed);
+            stats.snowMelted++;
+            return;
+        }
+        stats.uncovered++;
+        var raw = SnowRealMagic.raw(chunk, pos, state);
+        // A covered double plant: restore its upper half too
+        var abovePos = pos.above();
+        var aboveState = chunk.getBlockState(abovePos);
+        BlockState rawAbove = SnowRealMagic.covers(aboveState) ? SnowRealMagic.raw(chunk, abovePos, aboveState) : null;
+        chunk.removeBlockEntity(pos);
+        set(chunk, pos, raw, changed);
+        if (rawAbove != null) {
+            chunk.removeBlockEntity(abovePos);
+            set(chunk, abovePos, rawAbove, changed);
+        }
+    }
+
+    // Snow Real Magic, by reflection so it stays optional: its snow variants keep the block they
+    // cover, and `srm$getRaw` gives it back
+    private static final class SnowRealMagic {
+        private static final java.util.Map<Class<?>, java.lang.reflect.Method> RAW = new java.util.concurrent.ConcurrentHashMap<>();
+
+        static boolean covers(BlockState state) {
+            return !state.is(Blocks.SNOW)
+                && state.getBlock().builtInRegistryHolder().key().location().getNamespace().equals("snowrealmagic");
+        }
+
+        static BlockState raw(LevelChunk chunk, BlockPos pos, BlockState state) {
+            try {
+                var method = RAW.computeIfAbsent(state.getBlock().getClass(), c -> {
+                    try {
+                        return c.getMethod("srm$getRaw", BlockState.class, net.minecraft.world.level.BlockGetter.class, BlockPos.class);
+                    } catch (NoSuchMethodException e) {
+                        return null;
+                    }
+                });
+                if (method != null && method.invoke(state.getBlock(), state, chunk, pos) instanceof BlockState raw) {
+                    return raw;
+                }
+            } catch (ReflectiveOperationException | RuntimeException ignored) {
+            }
+            return Blocks.AIR.defaultBlockState();
+        }
     }
 
     // SnowLayerBlock.canSurvive without a Level: full top face, not ice or barrier

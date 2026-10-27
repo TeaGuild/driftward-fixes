@@ -184,13 +184,14 @@ public final class ClimateCommand {
         var level = level(source);
         var center = new net.minecraft.world.level.ChunkPos(BlockPos.containing(source.getPosition()));
         int chunks = 0, blocks = 0;
+        var stats = new ClimateSurface.Stats();
         for (int dx = -radius; dx <= radius; dx++) {
             for (int dz = -radius; dz <= radius; dz++) {
                 var chunk = level.getChunkSource().getChunkNow(center.x + dx, center.z + dz);
                 if (chunk == null) {
                     continue;
                 }
-                int changed = ClimateSurface.patch(level, chunk);
+                int changed = ClimateSurface.patch(level, chunk, stats);
                 if (changed > 0) {
                     // Loaded chunks are already on clients
                     level.getChunkSource().chunkMap.getPlayers(chunk.getPos(), false)
@@ -202,7 +203,9 @@ public final class ClimateCommand {
             }
         }
         int c = chunks, b = blocks;
-        source.sendSuccess(() -> Component.literal("Snow and ice brought in line with the climate: %d blocks in %d chunks".formatted(b, c)), true);
+        source.sendSuccess(() -> Component.literal(("Snow and ice brought in line with the climate: %d blocks in %d chunks "
+            + "(snow added %d, melted %d, covered blocks uncovered %d, ice frozen %d, thawed %d)").formatted(
+            b, c, stats.snowAdded, stats.snowMelted, stats.uncovered, stats.iceFrozen, stats.iceThawed)), true);
         return blocks;
     }
 
