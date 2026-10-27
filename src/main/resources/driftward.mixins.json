@@ -64,6 +64,7 @@
     "frostiful.FEntityTypesMixin",
     "grindstone.GrindstoneInputSlotMixin",
     "grindstone.SupplementariesGrindstoneFixMixin",
+    "powergrid.ThermoAmbientTemperatureMixin",
     "potions.EmiRemoveCreatePotions",
     "potions.EmiRemovePotions",
     "rope.RopeItemMixin",

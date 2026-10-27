@@ -137,7 +137,7 @@ dependencies {
     compileOnly("me.shedaniel.cloth:cloth-config-neoforge:15.0.140")
     compileOnly("maven.modrinth:scorchful:0.15.2+1.21.1-neoforge")
     compileOnly("maven.modrinth:frostiful:2.3.3+1.21.1-neoforge")
-    compileOnly("maven.modrinth:power-grid:8EtGIOFr")  // 0.5.5.1
+    compileOnly("maven.modrinth:power-grid:jCkPHjmP")  // 0.6.2, same as the pack
     compileOnly("maven.modrinth:yungs-better-end-island:1.21.1-NeoForge-3.1.2")
     compileOnly("maven.modrinth:betterend-neoforge:21.0.34")
     compileOnly("maven.modrinth:bclib-neoforge:21.0.26")
