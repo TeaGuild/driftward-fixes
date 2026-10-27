@@ -17,10 +17,14 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// The client has no world seed, so it can't run the model. For snow and rain rendering, the server
-// sends each player a grid of outdoor air temperatures at the surface around them.
+// The client has no world seed, so it can't run the model. The server sends each player a grid of
+// the climate around them: outdoor air temperature at the surface (for snow or rain) and the
+// weather (whether anything falls, cloud, fog), plus the weather right where the player is (sky
+// darkness, rain intensity, fog).
 public record ClimateSync(
-    int originX, int originZ, int spacing, int size, float lapse, float[] celsius, short[] surface
+    int originX, int originZ, int spacing, int size, float lapse, float[] celsius, short[] surface,
+    byte[] precipitation, byte[] thunder, byte[] cloud, byte[] fog,
+    float hereRain, float hereThunder, float hereCloud, float hereFog
 ) implements CustomPacketPayload {
     public static final Type<ClimateSync> TYPE =
         new Type<>(ResourceLocation.fromNamespaceAndPath(Driftward.MOD_ID, "climate_grid"));
@@ -35,7 +39,15 @@ public record ClimateSync(
             for (int i = 0; i < grid.size * grid.size; i++) {
                 buf.writeFloat(grid.celsius[i]);
                 buf.writeShort(grid.surface[i]);
+                buf.writeByte(grid.precipitation[i]);
+                buf.writeByte(grid.thunder[i]);
+                buf.writeByte(grid.cloud[i]);
+                buf.writeByte(grid.fog[i]);
             }
+            buf.writeFloat(grid.hereRain);
+            buf.writeFloat(grid.hereThunder);
+            buf.writeFloat(grid.hereCloud);
+            buf.writeFloat(grid.hereFog);
         },
         buf -> {
             int originX = buf.readVarInt();
@@ -43,13 +55,23 @@ public record ClimateSync(
             int spacing = buf.readVarInt();
             int size = Mth.clamp(buf.readVarInt(), 1, 64);
             float lapse = buf.readFloat();
-            var celsius = new float[size * size];
-            var surface = new short[size * size];
-            for (int i = 0; i < size * size; i++) {
+            int n = size * size;
+            var celsius = new float[n];
+            var surface = new short[n];
+            var precipitation = new byte[n];
+            var thunder = new byte[n];
+            var cloud = new byte[n];
+            var fog = new byte[n];
+            for (int i = 0; i < n; i++) {
                 celsius[i] = buf.readFloat();
                 surface[i] = buf.readShort();
+                precipitation[i] = buf.readByte();
+                thunder[i] = buf.readByte();
+                cloud[i] = buf.readByte();
+                fog[i] = buf.readByte();
             }
-            return new ClimateSync(originX, originZ, spacing, size, lapse, celsius, surface);
+            return new ClimateSync(originX, originZ, spacing, size, lapse, celsius, surface,
+                precipitation, thunder, cloud, fog, buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat());
         }
     );
 
@@ -65,11 +87,11 @@ public record ClimateSync(
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
         // Optional: clients without the mod just keep Serene Seasons' own behaviour
-        event.registrar("1").optional().playToClient(TYPE, STREAM_CODEC, ClimateSync::handle);
+        event.registrar("2").optional().playToClient(TYPE, STREAM_CODEC, ClimateSync::handle);
     }
 
     private static void handle(ClimateSync grid, IPayloadContext ctx) {
-        Grid.current = grid;
+        Grid.receive(grid);
     }
 
     private static void onPlayerTick(PlayerTickEvent.Post event) {
@@ -83,14 +105,23 @@ public record ClimateSync(
         PacketDistributor.sendToPlayer(player, sample(player.serverLevel(), player.blockPosition()));
     }
 
+    private static byte unit(double value) {
+        return (byte) Math.round(Mth.clamp(value, 0, 1) * 255);
+    }
+
     static ClimateSync sample(ServerLevel level, BlockPos center) {
         var c = ClimateConstants.get();
         int spacing = c.syncSpacing();
         int size = c.syncRadius() * 2 + 1;
         int originX = Math.floorDiv(center.getX(), spacing) * spacing - c.syncRadius() * spacing;
         int originZ = Math.floorDiv(center.getZ(), spacing) * spacing - c.syncRadius() * spacing;
-        var celsius = new float[size * size];
-        var surface = new short[size * size];
+        int n = size * size;
+        var celsius = new float[n];
+        var surface = new short[n];
+        var precipitation = new byte[n];
+        var thunder = new byte[n];
+        var cloud = new byte[n];
+        var fog = new byte[n];
         var pos = new BlockPos.MutableBlockPos();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -105,23 +136,57 @@ public record ClimateSync(
                 int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z);
                 pos.setY(y);
                 var biome = level.getBiome(pos);
+                var noise = ClimateModel.sample(level, pos);
                 var at = ClimateModel.live(level, pos, biome, true);
-                var breakdown = ClimateModel.breakdown(level, pos, biome, ClimateModel.sample(level, pos), at);
+                var breakdown = ClimateModel.breakdown(level, pos, biome, noise, at);
+                var weather = ClimateModel.weather(level, pos, biome, noise, at);
                 celsius[k] = (float) ClimatePrecipitation.celsius(biome, breakdown);
                 surface[k] = (short) y;
+                precipitation[k] = unit(weather.precipitation());
+                thunder[k] = unit(weather.thunder());
+                cloud[k] = unit(weather.cloud());
+                fog[k] = unit(weather.fog());
             }
         }
-        return new ClimateSync(originX, originZ, spacing, size, (float) c.lapsePerBlock(), celsius, surface);
+        var here = ClimateLocalWeather.at(level, center);
+        return new ClimateSync(originX, originZ, spacing, size, (float) c.lapsePerBlock(), celsius, surface,
+            precipitation, thunder, cloud, fog,
+            (float) here.precipitation(), (float) here.thunder(), (float) here.cloud(), (float) here.fog());
     }
 
     // The last grid the client received
     public static final class Grid {
         static volatile ClimateSync current;
+        // Weather at the player, eased from the previous update over a couple of seconds
+        private static volatile float[] from = new float[4];
+        private static volatile long receivedAt;
 
         private Grid() {}
 
         public static boolean present() {
             return current != null;
+        }
+
+        static void receive(ClimateSync grid) {
+            from = new float[] {here(0), here(1), here(2), here(3)};
+            receivedAt = System.currentTimeMillis();
+            current = grid;
+        }
+
+        // 0 rain, 1 thunder, 2 cloud, 3 fog at the player
+        public static float here(int which) {
+            var grid = current;
+            if (grid == null) {
+                return 0;
+            }
+            float target = switch (which) {
+                case 0 -> grid.hereRain;
+                case 1 -> grid.hereThunder;
+                case 2 -> grid.hereCloud;
+                default -> grid.hereFog;
+            };
+            float t = Mth.clamp((System.currentTimeMillis() - receivedAt) / 2000f, 0, 1);
+            return Mth.lerp(t, from[which], target);
         }
 
         // Bilinear between the grid's columns; above a column's surface it cools with the lapse rate
@@ -151,6 +216,20 @@ public record ClimateSync(
                 return grid.at((int) Math.round(gx), (int) Math.round(gz), pos.getY());
             }
             return Mth.lerp(fz, Mth.lerp(fx, a, b), Mth.lerp(fx, c, d));
+        }
+
+        // Precipitation 0..1 at a column (nearest grid cell); NaN outside the grid
+        public static double precipitation(BlockPos pos) {
+            var grid = current;
+            if (grid == null) {
+                return Double.NaN;
+            }
+            int i = (int) Math.round((pos.getX() - grid.originX) / (double) grid.spacing);
+            int j = (int) Math.round((pos.getZ() - grid.originZ) / (double) grid.spacing);
+            if (i < 0 || j < 0 || i >= grid.size || j >= grid.size || Float.isNaN(grid.celsius[i * grid.size + j])) {
+                return Double.NaN;
+            }
+            return (grid.precipitation[i * grid.size + j] & 0xff) / 255.0;
         }
     }
 

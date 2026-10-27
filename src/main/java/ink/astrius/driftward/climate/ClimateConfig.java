@@ -280,9 +280,9 @@ public final class ClimateConfig {
                 "computed from the seed, position and time (no saved state)")
             .push("weather");
         weatherEnabled = b.define("enabled", true);
-        weatherDrivesRain = b.comment("Rain and thunder come from the weather layer instead of vanilla's global weather",
-                "(off until local rain is rendered on clients; cloud is always used)")
-            .define("drivesRain", false);
+        weatherDrivesRain = b.comment("Local weather: rain, snow and thunder only where the weather layer has them (vanilla's",
+                "global flag then means 'somewhere near a player'); off keeps vanilla's global weather")
+            .define("drivesRain", true);
         weatherSteering = b.comment("Prevailing west-to-east wind (m/s)")
             .defineInRange("steering", 6.0, 0.0, 50.0);
         weatherDrift = b.comment("How fast weather systems drift east (blocks per tick)")

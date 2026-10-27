@@ -17,6 +17,7 @@ public class DriftwardClient {
             FoodEffectTooltips.registerClient();
             PigmentStubProperty.registerClient(modBus);
         }
+        ClimateFog.registerClient();
         if (ModLoaded.APPLESKIN && ModLoaded.SUPPLEMENTARIES) {
             LunchBasketTooltipFix.registerClient();
         }

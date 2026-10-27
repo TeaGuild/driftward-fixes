@@ -341,8 +341,9 @@ public final class ClimateCommand {
             var path = result.file().toString();
             out.append("\n").append(Component.literal(path).withStyle(s -> s
                 .withColor(ChatFormatting.AQUA).withUnderlined(true)
-                .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, path))
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Open the map")))));
+                // Servers may not send OPEN_FILE (the client drops the connection), so copy the path
+                .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, path))
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Copy the path")))));
             source.sendSuccess(() -> out, false);
         }));
         return 1;
