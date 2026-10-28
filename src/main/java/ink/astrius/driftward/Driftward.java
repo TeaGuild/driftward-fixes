@@ -2,6 +2,7 @@ package ink.astrius.driftward;
 
 import com.sashafiesta.ccterminals.TerminalBlock;
 import ink.astrius.driftward.climate.BiomeClimate;
+import ink.astrius.driftward.climate.ClimateAvionics;
 import ink.astrius.driftward.climate.ClimateConstants;
 import ink.astrius.driftward.climate.ClimateEnvironmentProvider;
 import ink.astrius.driftward.climate.ClimateCommand;
@@ -58,6 +59,7 @@ public class Driftward {
         ClimateCommand.register();
         ClimateSurface.register();
         ClimateLocalWeather.register();
+        ClimateAvionics.register(modBus);
         NeoForge.EVENT_BUS.addListener(GrindstoneHandler::grindstoneEventHandler);
         if (crystallarieumAmberCompat != null) {
             crystallarieumAmberCompat.register();
