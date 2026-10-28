@@ -82,11 +82,11 @@ public final class ClimateCommand {
         dispatcher.register(Commands.literal("driftward").then(Commands.literal("climate")
             .requires(s -> s.hasPermission(2))
             .then(Commands.literal("probe")
-                .executes(ctx -> probe(ctx.getSource(), BlockPos.containing(ctx.getSource().getPosition())))
+                .executes(ctx -> probe(ctx.getSource(), here(ctx.getSource())))
                 .then(Commands.argument("pos", BlockPosArgument.blockPos())
                     .executes(ctx -> probe(ctx.getSource(), BlockPosArgument.getLoadedBlockPos(ctx, "pos")))))
             .then(Commands.literal("year")
-                .executes(ctx -> year(ctx.getSource(), BlockPos.containing(ctx.getSource().getPosition())))
+                .executes(ctx -> year(ctx.getSource(), here(ctx.getSource())))
                 .then(Commands.argument("pos", BlockPosArgument.blockPos())
                     .executes(ctx -> year(ctx.getSource(), BlockPosArgument.getLoadedBlockPos(ctx, "pos")))))
             .then(Commands.literal("map")
@@ -127,6 +127,16 @@ public final class ClimateCommand {
             throw NOT_SERVER_LEVEL.create();
         }
         return source.getLevel();
+    }
+
+    // The source's position, like the `pos` argument only where it is loaded: probing loads the chunk,
+    // and a scan over unloaded ground would generate it on the server thread
+    private static BlockPos here(CommandSourceStack source) throws CommandSyntaxException {
+        var pos = BlockPos.containing(source.getPosition());
+        if (!source.getLevel().hasChunkAt(pos)) {
+            throw BlockPosArgument.ERROR_NOT_LOADED.create();
+        }
+        return pos;
     }
 
     // Probe
